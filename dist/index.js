@@ -121,6 +121,25 @@ exports.isConventionalModification = isConventionalModification;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -132,6 +151,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GitHubLoader = void 0;
+const core = __importStar(__webpack_require__(2186));
 const js_yaml_1 = __webpack_require__(1917);
 const functions_1 = __webpack_require__(1369);
 const QUERY = `
@@ -160,12 +180,16 @@ class GitHubLoader {
     load(projectDir, properties) {
         return __awaiter(this, void 0, void 0, function* () {
             const metadata = {};
-            const { data } = yield this.octokit.graphql(QUERY, Object.assign(Object.assign({}, this.repo), { objectExpression: `${this.baseRef}:${functions_1.metadataPathFromProject(projectDir)}` }));
+            const objectExpression = `${this.baseRef}:${functions_1.metadataPathFromProject(projectDir)}`;
+            core.debug(`Loading metadata: ${objectExpression}`);
+            const data = yield this.octokit.graphql(QUERY, Object.assign(Object.assign({}, this.repo), { objectExpression }));
             for (const entry of data.repository.metadata.entries) {
+                core.debug(`Evaluating entry: ${entry.name}`);
                 const property = properties.find(prop => {
                     return functions_1.metadataFilenameFromProperty(prop) === entry.name;
                 });
                 if (property) {
+                    core.debug(`Loading entry: ${entry.name}`);
                     metadata[property] = js_yaml_1.load(entry.object.text);
                 }
             }
@@ -183,6 +207,25 @@ exports.GitHubLoader = GitHubLoader;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -198,6 +241,7 @@ const fs_1 = __webpack_require__(5747);
 const js_yaml_1 = __webpack_require__(1917);
 const path_1 = __webpack_require__(5622);
 const functions_1 = __webpack_require__(1369);
+const core = __importStar(__webpack_require__(2186));
 class WorkspaceLoader {
     constructor(workspacePath) {
         this.workspacePath = workspacePath;
@@ -206,7 +250,10 @@ class WorkspaceLoader {
         return __awaiter(this, void 0, void 0, function* () {
             const metadata = {};
             for (const property of properties) {
-                const yaml = fs_1.readFileSync(path_1.join(this.workspacePath, functions_1.metadataPathFromProject(projectDir), `${property}.yaml`), 'utf8');
+                const path = path_1.join(this.workspacePath, functions_1.metadataPathFromProject(projectDir), `${property}.yaml`);
+                core.debug(`Reading file: ${path}`);
+                const yaml = fs_1.readFileSync(path, 'utf8');
+                core.debug(`Loading file: ${path}`);
                 metadata[property] = js_yaml_1.load(yaml);
             }
             return metadata;
@@ -284,8 +331,12 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const projectDir = core.getInput('project_dir');
+            core.startGroup(`Loading old metadata in: ${projectDir}`);
             const oldMetadata = yield new GitHubLoader_1.GitHubLoader(github.getOctokit(core.getInput('github_token')), github.context.repo, process.env.GITHUB_BASE_REF || '').load(projectDir, exports.PROPERTIES);
+            core.endGroup();
+            core.startGroup(`Loading new metadata in: ${projectDir}`);
             const newMetadata = yield new WorkspaceLoader_1.WorkspaceLoader((_a = process.env.GITHUB_WORKSPACE) !== null && _a !== void 0 ? _a : '').load(projectDir, exports.PROPERTIES);
+            core.endGroup();
             const diff = diff_1.diffV2(oldMetadata, newMetadata);
             core.debug(JSON.stringify(diff, null, 2));
         }
