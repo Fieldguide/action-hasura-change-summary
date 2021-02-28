@@ -4,6 +4,7 @@ import {load} from 'js-yaml'
 import {join} from 'path'
 import {metadataPathFromProject} from './functions'
 import {MetadataLoader, MetadataProperty} from './types'
+import * as core from '@actions/core'
 
 export class WorkspaceLoader implements MetadataLoader {
   constructor(private workspacePath: string) {}
@@ -15,15 +16,16 @@ export class WorkspaceLoader implements MetadataLoader {
     const metadata = {} as HasuraMetadataV2
 
     for (const property of properties) {
-      const yaml = readFileSync(
-        join(
-          this.workspacePath,
-          metadataPathFromProject(projectDir),
-          `${property}.yaml`
-        ),
-        'utf8'
+      const path = join(
+        this.workspacePath,
+        metadataPathFromProject(projectDir),
+        `${property}.yaml`
       )
 
+      core.debug(`Reading file: ${path}`)
+      const yaml = readFileSync(path, 'utf8')
+
+      core.debug(`Loading file: ${path}`)
       metadata[property] = load(yaml) as any
     }
 

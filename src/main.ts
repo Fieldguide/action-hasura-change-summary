@@ -11,15 +11,19 @@ async function run(): Promise<void> {
   try {
     const projectDir = core.getInput('project_dir')
 
+    core.startGroup(`Loading old metadata in: ${projectDir}`)
     const oldMetadata = await new GitHubLoader(
       github.getOctokit(core.getInput('github_token')),
       github.context.repo,
       process.env.GITHUB_BASE_REF || ''
     ).load(projectDir, PROPERTIES)
+    core.endGroup()
 
+    core.startGroup(`Loading new metadata in: ${projectDir}`)
     const newMetadata = await new WorkspaceLoader(
       process.env.GITHUB_WORKSPACE ?? ''
     ).load(projectDir, PROPERTIES)
+    core.endGroup()
 
     const diff = diffV2(oldMetadata, newMetadata)
 
