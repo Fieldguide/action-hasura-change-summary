@@ -1,4 +1,4 @@
-import {TableEntry} from '@hasura/metadata'
+import {QualifiedTable, TableEntry} from '@hasura/metadata'
 import * as jsondiffpatch from 'jsondiffpatch'
 import {forEach} from 'lodash'
 import {isAddition, isDeletion, isTableEntry, TableChange} from './types'
@@ -41,4 +41,29 @@ export function diffTables(
   })
 
   return change
+}
+
+export function formatTables(change: TableChange): string {
+  return (
+    formatTableChange('Tracked Tables', change.tracked) +
+    formatTableChange('Updated Tables', change.updated) +
+    formatTableChange('Untracked Tables', change.untracked)
+  ).trim()
+}
+
+export function formatTableChange(
+  header: string,
+  tables: QualifiedTable[]
+): string {
+  if (0 === tables.length) {
+    return ''
+  }
+
+  return `### ${header}\n\n${formatQualifiedTables(tables)}\n\n`
+}
+
+export function formatQualifiedTables(tables: QualifiedTable[]): string {
+  return `* ${tables
+    .map(table => `\`${table.schema}.${table.name}\``)
+    .join('\n* ')}`
 }

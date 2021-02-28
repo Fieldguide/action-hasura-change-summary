@@ -8,14 +8,18 @@ require('./sourcemap-register.js');module.exports =
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.diffV2 = void 0;
+exports.format = exports.diff = void 0;
 const tables_1 = __webpack_require__(3951);
-function diffV2(oldMetadata, newMetadata) {
+function diff(oldMetadata, newMetadata) {
     return {
         tables: tables_1.diffTables(oldMetadata.tables, newMetadata.tables)
     };
 }
-exports.diffV2 = diffV2;
+exports.diff = diff;
+function format(change) {
+    return tables_1.formatTables(change.tables);
+}
+exports.format = format;
 
 
 /***/ }),
@@ -45,7 +49,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.diffTables = void 0;
+exports.formatQualifiedTables = exports.formatTableChange = exports.formatTables = exports.diffTables = void 0;
 const jsondiffpatch = __importStar(__webpack_require__(8468));
 const lodash_1 = __webpack_require__(250);
 const types_1 = __webpack_require__(6630);
@@ -82,6 +86,25 @@ function diffTables(oldTables, newTables) {
     return change;
 }
 exports.diffTables = diffTables;
+function formatTables(change) {
+    return (formatTableChange('Tracked Tables', change.tracked) +
+        formatTableChange('Updated Tables', change.updated) +
+        formatTableChange('Untracked Tables', change.untracked)).trim();
+}
+exports.formatTables = formatTables;
+function formatTableChange(header, tables) {
+    if (0 === tables.length) {
+        return '';
+    }
+    return `### ${header}\n\n${formatQualifiedTables(tables)}\n\n`;
+}
+exports.formatTableChange = formatTableChange;
+function formatQualifiedTables(tables) {
+    return `* ${tables
+        .map(table => `\`${table.schema}.${table.name}\``)
+        .join('\n* ')}`;
+}
+exports.formatQualifiedTables = formatQualifiedTables;
 
 
 /***/ }),
@@ -360,8 +383,10 @@ function run() {
             core.startGroup(`Loading new metadata in: ${projectDir}`);
             const newMetadata = yield new WorkspaceLoader_1.WorkspaceLoader((_a = process.env.GITHUB_WORKSPACE) !== null && _a !== void 0 ? _a : '').load(projectDir, exports.PROPERTIES);
             core.endGroup();
-            const diff = diff_1.diffV2(oldMetadata, newMetadata);
-            core.debug(JSON.stringify(diff, null, 2));
+            core.startGroup('Comparing metadata changes');
+            const change = diff_1.diff(oldMetadata, newMetadata);
+            core.setOutput('change', change);
+            core.setOutput('change_markdown', diff_1.format(change));
         }
         catch (error) {
             core.setFailed(error.message);

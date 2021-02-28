@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {diffV2} from './diff'
+import {diff, format} from './diff'
 import {GitHubLoader} from './load/GitHubLoader'
 import {MetadataProperty} from './load/types'
 import {WorkspaceLoader} from './load/WorkspaceLoader'
@@ -25,9 +25,11 @@ async function run(): Promise<void> {
     ).load(projectDir, PROPERTIES)
     core.endGroup()
 
-    const diff = diffV2(oldMetadata, newMetadata)
+    core.startGroup('Comparing metadata changes')
+    const change = diff(oldMetadata, newMetadata)
 
-    core.debug(JSON.stringify(diff, null, 2))
+    core.setOutput('change', change)
+    core.setOutput('change_markdown', format(change))
   } catch (error) {
     core.setFailed(error.message)
     core.debug(error.stack)

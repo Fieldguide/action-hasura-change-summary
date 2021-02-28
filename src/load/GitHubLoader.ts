@@ -50,6 +50,7 @@ export class GitHubLoader implements MetadataLoader {
       ...this.repo,
       objectExpression
     })
+
     const entries = repository.metadata?.entries
 
     if (!isArray(entries)) {
