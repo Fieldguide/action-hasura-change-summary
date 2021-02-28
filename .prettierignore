@@ -1,4 +1,4 @@
 dist/
 lib/
 node_modules/
-src/metadata/__tests__/fixtures/
+src/diff/__tests__/fixtures/
