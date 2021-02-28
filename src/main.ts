@@ -1,18 +1,32 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
+import {diffV2} from './diff'
+import {GitHubLoader} from './load/GitHubLoader'
+import {MetadataProperty} from './load/types'
+import {WorkspaceLoader} from './load/WorkspaceLoader'
+
+export const PROPERTIES: MetadataProperty[] = ['tables', 'version']
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const projectDir = core.getInput('project_dir')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const oldMetadata = await new GitHubLoader(
+      github.getOctokit(core.getInput('github_token')),
+      github.context.repo,
+      process.env.GITHUB_BASE_REF || ''
+    ).load(projectDir, PROPERTIES)
 
-    core.setOutput('time', new Date().toTimeString())
+    const newMetadata = await new WorkspaceLoader(
+      process.env.GITHUB_WORKSPACE ?? ''
+    ).load(projectDir, PROPERTIES)
+
+    const diff = diffV2(oldMetadata, newMetadata)
+
+    core.debug(JSON.stringify(diff, null, 2))
   } catch (error) {
     core.setFailed(error.message)
+    core.debug(error.stack)
   }
 }
 
