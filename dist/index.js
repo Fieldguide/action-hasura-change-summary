@@ -153,7 +153,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GitHubLoader = void 0;
 const core = __importStar(__webpack_require__(2186));
 const js_yaml_1 = __webpack_require__(1917);
+const lodash_1 = __webpack_require__(250);
 const functions_1 = __webpack_require__(1369);
+const index_1 = __webpack_require__(3133);
 const QUERY = `
 query metadataContents($owner: String!, $repo: String!, $objectExpression: String!) {
   repository(owner: $owner, name: $repo) {
@@ -178,12 +180,17 @@ class GitHubLoader {
         this.baseRef = baseRef;
     }
     load(projectDir, properties) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const metadata = {};
+            const metadata = Object.assign({}, index_1.EMPTY_METADATA);
             const objectExpression = `${this.baseRef}:${functions_1.metadataPathFromProject(projectDir)}`;
             core.debug(`Loading metadata: ${objectExpression}`);
-            const data = yield this.octokit.graphql(QUERY, Object.assign(Object.assign({}, this.repo), { objectExpression }));
-            for (const entry of data.repository.metadata.entries) {
+            const { repository } = yield this.octokit.graphql(QUERY, Object.assign(Object.assign({}, this.repo), { objectExpression }));
+            const entries = (_a = repository.metadata) === null || _a === void 0 ? void 0 : _a.entries;
+            if (!lodash_1.isArray(entries)) {
+                return metadata;
+            }
+            for (const entry of entries) {
                 core.debug(`Evaluating entry: ${entry.name}`);
                 const property = properties.find(prop => {
                     return functions_1.metadataFilenameFromProperty(prop) === entry.name;
@@ -237,18 +244,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WorkspaceLoader = void 0;
+const core = __importStar(__webpack_require__(2186));
 const fs_1 = __webpack_require__(5747);
 const js_yaml_1 = __webpack_require__(1917);
 const path_1 = __webpack_require__(5622);
+const _1 = __webpack_require__(3133);
 const functions_1 = __webpack_require__(1369);
-const core = __importStar(__webpack_require__(2186));
 class WorkspaceLoader {
     constructor(workspacePath) {
         this.workspacePath = workspacePath;
     }
     load(projectDir, properties) {
         return __awaiter(this, void 0, void 0, function* () {
-            const metadata = {};
+            const metadata = Object.assign({}, _1.EMPTY_METADATA);
             for (const property of properties) {
                 const path = path_1.join(this.workspacePath, functions_1.metadataPathFromProject(projectDir), `${property}.yaml`);
                 core.debug(`Reading file: ${path}`);
@@ -281,6 +289,21 @@ function metadataFilenameFromProperty(property) {
     return `${property}.yaml`;
 }
 exports.metadataFilenameFromProperty = metadataFilenameFromProperty;
+
+
+/***/ }),
+
+/***/ 3133:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.EMPTY_METADATA = void 0;
+exports.EMPTY_METADATA = {
+    version: 2,
+    tables: []
+};
 
 
 /***/ }),
