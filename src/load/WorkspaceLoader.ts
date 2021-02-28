@@ -1,10 +1,11 @@
+import * as core from '@actions/core'
 import {HasuraMetadataV2} from '@hasura/metadata'
 import {readFileSync} from 'fs'
 import {load} from 'js-yaml'
 import {join} from 'path'
+import {EMPTY_METADATA} from '.'
 import {metadataPathFromProject} from './functions'
 import {MetadataLoader, MetadataProperty} from './types'
-import * as core from '@actions/core'
 
 export class WorkspaceLoader implements MetadataLoader {
   constructor(private workspacePath: string) {}
@@ -13,7 +14,7 @@ export class WorkspaceLoader implements MetadataLoader {
     projectDir: string,
     properties: MetadataProperty[]
   ): Promise<HasuraMetadataV2> {
-    const metadata = {} as HasuraMetadataV2
+    const metadata: HasuraMetadataV2 = {...EMPTY_METADATA}
 
     for (const property of properties) {
       const path = join(

@@ -3,10 +3,12 @@ import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
 import {HasuraMetadataV2} from '@hasura/metadata'
 import {load} from 'js-yaml'
+import {isArray} from 'lodash'
 import {
   metadataFilenameFromProperty,
   metadataPathFromProject
 } from './functions'
+import {EMPTY_METADATA} from './index'
 import {MetadataLoader, MetadataProperty} from './types'
 
 const QUERY = `
@@ -38,18 +40,23 @@ export class GitHubLoader implements MetadataLoader {
     projectDir: string,
     properties: MetadataProperty[]
   ): Promise<HasuraMetadataV2> {
-    const metadata = {} as HasuraMetadataV2
+    const metadata: HasuraMetadataV2 = {...EMPTY_METADATA}
     const objectExpression = `${this.baseRef}:${metadataPathFromProject(
       projectDir
     )}`
 
     core.debug(`Loading metadata: ${objectExpression}`)
-    const data = await this.octokit.graphql<any>(QUERY, {
+    const {repository} = await this.octokit.graphql<any>(QUERY, {
       ...this.repo,
       objectExpression
     })
+    const entries = repository.metadata?.entries
 
-    for (const entry of data.repository.metadata.entries) {
+    if (!isArray(entries)) {
+      return metadata
+    }
+
+    for (const entry of entries) {
       core.debug(`Evaluating entry: ${entry.name}`)
       const property = properties.find(prop => {
         return metadataFilenameFromProperty(prop) === entry.name
