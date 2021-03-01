@@ -59,11 +59,11 @@ export function formatTableChange(
     return ''
   }
 
-  return `### ${header}\n\n${formatQualifiedTables(tables)}\n\n`
+  return `### ${header}\n\n${tables
+    .map(table => formatQualifiedTable(table))
+    .join('\n')}\n\n`
 }
 
-export function formatQualifiedTables(tables: QualifiedTable[]): string {
-  return `* ${tables
-    .map(table => `\`${table.schema}.${table.name}\``)
-    .join('\n* ')}`
+export function formatQualifiedTable(table: QualifiedTable): string {
+  return `* \`${table.schema}.${table.name}\``
 }

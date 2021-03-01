@@ -67,6 +67,16 @@ describe('tables', () => {
         '### Tracked Tables\n\n* `public.users`\n\n### Updated Tables\n\n* `public.todos`'
       )
     })
+
+    test('untracked', () => {
+      expect(
+        formatTables({
+          tracked: [],
+          untracked: [table('public', 'users')],
+          updated: []
+        })
+      ).toStrictEqual('### Untracked Tables\n\n* `public.users`')
+    })
   })
 })
 

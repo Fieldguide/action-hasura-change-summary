@@ -2,7 +2,7 @@
   "name": "action-hasura-change-summary",
   "version": "0.1.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Generate readable Hasura metadata change summaries",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,12 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/namoscato/action-hasura-change-summary.git"
   },
   "keywords": [
     "actions",
-    "node",
-    "setup"
+    "hasura",
+    "metadata",
+    "change",
+    "summary",
+    "diff"
   ],
   "author": "Nick Amoscato <nick@amoscato.com>",
   "license": "MIT",
