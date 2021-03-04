@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import {QualifiedTable, TableEntry} from '@hasura/metadata'
 import * as jsondiffpatch from 'jsondiffpatch'
 import {forEach} from 'lodash'
@@ -17,6 +18,7 @@ export function diffTables(
   oldTables: TableEntry[],
   newTables: TableEntry[]
 ): TableChange {
+  core.info('Diffing table metadata')
   const tablesDelta = diffPatcher.diff(oldTables, newTables)
   const change: TableChange = {
     tracked: [],
@@ -31,6 +33,8 @@ export function diffTables(
   forEach(tablesDelta, (delta: any, index: string) => {
     const tableIndex = Number(index)
 
+    core.debug(`Processing delta: ${delta}`)
+
     if (isAddition<TableEntry>(delta)) {
       change.tracked.push(delta[0].table)
     } else if (isDeletion<TableEntry>(delta)) {
@@ -44,6 +48,8 @@ export function diffTables(
 }
 
 export function formatTables(change: TableChange): string {
+  core.info('Formatting table change')
+
   return (
     formatTableChange('Tracked Tables', change.tracked) +
     formatTableChange('Updated Tables', change.updated) +

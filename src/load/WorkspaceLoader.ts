@@ -15,7 +15,7 @@ export class WorkspaceLoader implements MetadataLoader {
   constructor(private workspacePath: string) {}
 
   async load(projectDir: string): Promise<HasuraMetadataV2> {
-    core.debug('Initializing metadata from version')
+    core.info('Initializing metadata from version')
     const metadata = metadataFromVersionContents(
       this.readFile(projectDir, 'version')
     )
@@ -23,7 +23,7 @@ export class WorkspaceLoader implements MetadataLoader {
     for (const property of METADATA_PROPERTIES) {
       const yaml = this.readFile(projectDir, property)
 
-      core.debug(`Parsing ${property} YAML metadata`)
+      core.info(`Parsing ${property} YAML metadata`)
       metadata[property] = load(yaml) as any
     }
 

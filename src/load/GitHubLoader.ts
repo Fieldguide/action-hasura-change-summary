@@ -43,7 +43,7 @@ export class GitHubLoader implements MetadataLoader {
       projectDir
     )}`
 
-    core.debug(`Loading metadata: ${objectExpression}`)
+    core.info(`Loading metadata: ${objectExpression}`)
     const {repository} = await this.octokit.graphql<any>(QUERY, {
       ...this.repo,
       objectExpression
@@ -55,7 +55,7 @@ export class GitHubLoader implements MetadataLoader {
       return metadataFromVersion(2)
     }
 
-    core.debug('Initializing metadata from version')
+    core.info('Initializing metadata from version')
     const versionEntry = entries.find(
       entry => metadataFilenameFromProperty('version') === entry.name
     )
@@ -73,7 +73,7 @@ export class GitHubLoader implements MetadataLoader {
       })
 
       if (property) {
-        core.debug(`Parsing ${property} YAML metadata`)
+        core.info(`Parsing ${property} YAML metadata`)
         metadata[property] = load(entry.object.text) as any
       }
     }
