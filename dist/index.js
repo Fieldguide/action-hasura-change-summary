@@ -10,7 +10,6 @@ require('./sourcemap-register.js');module.exports =
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.format = exports.diff = void 0;
 const tables_1 = __webpack_require__(3951);
-// TODO: add logging throughout
 function diff(oldMetadata, newMetadata) {
     return {
         tables: tables_1.diffTables(oldMetadata.tables, newMetadata.tables)
@@ -51,6 +50,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.formatQualifiedTable = exports.formatTableChange = exports.formatTables = exports.diffTables = void 0;
+const core = __importStar(__webpack_require__(2186));
 const jsondiffpatch = __importStar(__webpack_require__(8468));
 const lodash_1 = __webpack_require__(250);
 const types_1 = __webpack_require__(6630);
@@ -63,6 +63,7 @@ const diffPatcher = jsondiffpatch.create({
     }
 });
 function diffTables(oldTables, newTables) {
+    core.info('Diffing table metadata');
     const tablesDelta = diffPatcher.diff(oldTables, newTables);
     const change = {
         tracked: [],
@@ -74,6 +75,7 @@ function diffTables(oldTables, newTables) {
     }
     lodash_1.forEach(tablesDelta, (delta, index) => {
         const tableIndex = Number(index);
+        core.debug(`Processing delta: ${delta}`);
         if (types_1.isAddition(delta)) {
             change.tracked.push(delta[0].table);
         }
@@ -88,6 +90,7 @@ function diffTables(oldTables, newTables) {
 }
 exports.diffTables = diffTables;
 function formatTables(change) {
+    core.info('Formatting table change');
     return (formatTableChange('Tracked Tables', change.tracked) +
         formatTableChange('Updated Tables', change.updated) +
         formatTableChange('Untracked Tables', change.untracked)).trim();
@@ -207,13 +210,13 @@ class GitHubLoader {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const objectExpression = `${this.baseRef}:${functions_1.metadataPathFromProject(projectDir)}`;
-            core.debug(`Loading metadata: ${objectExpression}`);
+            core.info(`Loading metadata: ${objectExpression}`);
             const { repository } = yield this.octokit.graphql(QUERY, Object.assign(Object.assign({}, this.repo), { objectExpression }));
             const entries = (_a = repository.metadata) === null || _a === void 0 ? void 0 : _a.entries;
             if (!lodash_1.isArray(entries)) {
                 return functions_1.metadataFromVersion(2);
             }
-            core.debug('Initializing metadata from version');
+            core.info('Initializing metadata from version');
             const versionEntry = entries.find(entry => functions_1.metadataFilenameFromProperty('version') === entry.name);
             if (!versionEntry) {
                 throw new Error('No version metadata file');
@@ -225,7 +228,7 @@ class GitHubLoader {
                     return functions_1.metadataFilenameFromProperty(prop) === entry.name;
                 });
                 if (property) {
-                    core.debug(`Parsing ${property} YAML metadata`);
+                    core.info(`Parsing ${property} YAML metadata`);
                     metadata[property] = js_yaml_1.load(entry.object.text);
                 }
             }
@@ -285,11 +288,11 @@ class WorkspaceLoader {
     }
     load(projectDir) {
         return __awaiter(this, void 0, void 0, function* () {
-            core.debug('Initializing metadata from version');
+            core.info('Initializing metadata from version');
             const metadata = functions_1.metadataFromVersionContents(this.readFile(projectDir, 'version'));
             for (const property of consts_1.METADATA_PROPERTIES) {
                 const yaml = this.readFile(projectDir, property);
-                core.debug(`Parsing ${property} YAML metadata`);
+                core.info(`Parsing ${property} YAML metadata`);
                 metadata[property] = js_yaml_1.load(yaml);
             }
             return metadata;
