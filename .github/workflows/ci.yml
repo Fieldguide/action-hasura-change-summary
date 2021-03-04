@@ -1,10 +1,9 @@
-name: 'build-test'
+name: ci
 on:
   pull_request:
   push:
     branches:
       - main
-      - 'releases/*'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,6 +16,9 @@ jobs:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
       - run: npm ci
       - run: npm run all
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Build project
   test:
     runs-on: ubuntu-latest
     steps:
