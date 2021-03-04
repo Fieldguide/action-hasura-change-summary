@@ -102,7 +102,7 @@ describe('GitHubLoader', () => {
 
 function readFixture(property: keyof HasuraMetadataV2): string {
   return readFileSync(
-    join(__dirname, 'fixtures', 'metadata', `${property}.yaml`),
+    join('__tests__', 'fixtures', 'metadata', `${property}.yaml`),
     'utf8'
   )
 }

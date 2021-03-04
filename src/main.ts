@@ -24,6 +24,7 @@ async function run(): Promise<void> {
 
     core.startGroup('Comparing metadata changes')
     const change = diff(oldMetadata, newMetadata)
+    core.endGroup()
 
     core.setOutput('change', change)
     core.setOutput('change_markdown', format(change))

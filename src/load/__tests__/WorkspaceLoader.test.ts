@@ -4,7 +4,7 @@ describe('WorkspaceLoader', () => {
   let target: WorkspaceLoader
 
   beforeEach(() => {
-    target = new WorkspaceLoader(__dirname)
+    target = new WorkspaceLoader('./')
   })
 
   test('load', () => {
