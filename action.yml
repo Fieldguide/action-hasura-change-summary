@@ -11,7 +11,7 @@ inputs:
     default: '.'
 outputs:
   change:
-    description: 'Structured change data'
+    description: 'Structured change JSON'
   change_markdown:
     description: 'Markdown change summary'
 runs:
