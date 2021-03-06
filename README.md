@@ -1,4 +1,4 @@
-[![build-test](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/test.yml/badge.svg)](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/test.yml)
+[![ci](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml/badge.svg)](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml)
 
 # Hasura Change Summary
 
