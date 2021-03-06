@@ -1,11 +1,19 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Hasura Change Summary'
+description: 'Generate readable Hasura metadata change summaries'
+author: 'namoscato'
 inputs:
-  milliseconds: # change this
+  github_token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'GITHUB_TOKEN secret'
+  project_dir:
+    required: false
+    description: 'Hasura project directory, relative to GITHUB_WORKSPACE'
+    default: '.'
+outputs:
+  change:
+    description: 'Structured change JSON'
+  change_markdown:
+    description: 'Markdown change summary'
 runs:
   using: 'node12'
   main: 'dist/index.js'
