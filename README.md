@@ -1,4 +1,4 @@
-[![ci](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml/badge.svg)](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml)
+[![ci](https://github.com/Fieldguide/action-hasura-change-summary/actions/workflows/ci.yml/badge.svg)](https://github.com/Fieldguide/action-hasura-change-summary/actions/workflows/ci.yml)
 
 # Hasura Change Summary
 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: namoscato/action-hasura-change-summary@v1
+      - uses: Fieldguide/action-hasura-change-summary@v1
         id: hasura-change
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
