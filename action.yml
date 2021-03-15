@@ -9,6 +9,9 @@ inputs:
     required: false
     description: 'Hasura project directory, relative to GITHUB_WORKSPACE'
     default: '.'
+  hasura_endpoint:
+    required: false
+    description: 'Hasura GraphQL engine http(s) endpoint, used for deep console links'
 outputs:
   change:
     description: 'Structured change JSON'

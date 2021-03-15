@@ -1,16 +1,17 @@
 import {HasuraMetadataV2} from '@hasura/metadata'
 import {diffTables, formatTables} from './tables'
-import {Change} from './types'
+import {Changes, DiffOptions} from './types'
 
 export function diff(
   oldMetadata: HasuraMetadataV2,
-  newMetadata: HasuraMetadataV2
-): Change {
+  newMetadata: HasuraMetadataV2,
+  options: DiffOptions = {}
+): Changes {
   return {
-    tables: diffTables(oldMetadata.tables, newMetadata.tables)
+    tables: diffTables(oldMetadata.tables, newMetadata.tables, options)
   }
 }
 
-export function format(change: Change): string {
-  return formatTables(change.tables)
+export function format(changes: Changes): string {
+  return formatTables(changes.tables)
 }

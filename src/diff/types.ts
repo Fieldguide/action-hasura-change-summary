@@ -3,10 +3,14 @@ import {isArray, isObject, isString} from 'lodash'
 
 export type TableChangeType = 'tracked' | 'untracked' | 'updated'
 
-export type TableChange = Record<TableChangeType, QualifiedTable[]>
+export interface TableChange extends QualifiedTable {
+  consoleUrl?: string
+}
 
-export interface Change {
-  tables: TableChange
+export type TableChanges = Record<TableChangeType, TableChange[]>
+
+export interface Changes {
+  tables: TableChanges
 }
 
 export type DeltaAddition<T> = [T]
@@ -43,4 +47,9 @@ export function isConventionalModification<T>(
   delta: any
 ): delta is DeltaModificationConventional<T> {
   return isArray(delta) && 2 === delta.length
+}
+
+export interface DiffOptions {
+  /** Hasura GraphQL engine http(s) endpoint, used for deep console links */
+  hasuraEndpoint?: string
 }

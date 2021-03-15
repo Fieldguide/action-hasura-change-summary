@@ -31,10 +31,11 @@ jobs:
 
 ## Inputs
 
-| input              | default | description                                              |
-| ------------------ | ------- | -------------------------------------------------------- |
-| **`github_token`** |         | `GITHUB_TOKEN` secret                                    |
-| `project_dir`      | `'.'`   | Hasura project directory, relative to `GITHUB_WORKSPACE` |
+| input              | default | description                                                         |
+| ------------------ | ------- | ------------------------------------------------------------------- |
+| **`github_token`** |         | `GITHUB_TOKEN` secret                                               |
+| `project_dir`      | `'.'`   | Hasura project directory, relative to `GITHUB_WORKSPACE`            |
+| `hasura_endpoint`  |         | Hasura GraphQL engine http(s) endpoint, used for deep console links |
 
 ## Outputs
 
