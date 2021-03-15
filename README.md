@@ -1,4 +1,4 @@
-[![ci](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml/badge.svg)](https://github.com/namoscato/action-hasura-change-summary/actions/workflows/ci.yml)
+[![ci](https://github.com/Fieldguide/action-hasura-change-summary/actions/workflows/ci.yml/badge.svg)](https://github.com/Fieldguide/action-hasura-change-summary/actions/workflows/ci.yml)
 
 # Hasura Change Summary
 
@@ -19,10 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: namoscato/action-hasura-change-summary@v1
+      - uses: Fieldguide/action-hasura-change-summary@v1
         id: hasura-change
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,10 +32,11 @@ jobs:
 
 ## Inputs
 
-| input              | default | description                                              |
-| ------------------ | ------- | -------------------------------------------------------- |
-| **`github_token`** |         | `GITHUB_TOKEN` secret                                    |
-| `project_dir`      | `'.'`   | Hasura project directory, relative to `GITHUB_WORKSPACE` |
+| input              | default | description                                                         |
+| ------------------ | ------- | ------------------------------------------------------------------- |
+| **`github_token`** |         | `GITHUB_TOKEN` secret                                               |
+| `project_dir`      | `'.'`   | Hasura project directory, relative to `GITHUB_WORKSPACE`            |
+| `hasura_endpoint`  |         | Hasura GraphQL engine http(s) endpoint, used for deep console links |
 
 ## Outputs
 

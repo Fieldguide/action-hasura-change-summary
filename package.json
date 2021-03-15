@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/namoscato/action-hasura-change-summary.git"
+    "url": "git+https://github.com/Fieldguide/action-hasura-change-summary.git"
   },
   "keywords": [
     "actions",
@@ -33,13 +33,14 @@
     "@hasura/metadata": "^1.0.2",
     "js-yaml": "^4.0.0",
     "jsondiffpatch": "^0.4.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "urlcat": "^2.0.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/js-yaml": "^4.0.0",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.9",
+    "@types/node": "^12.20.5",
     "@typescript-eslint/parser": "^4.17.0",
     "@vercel/ncc": "^0.27.0",
     "eslint": "^7.22.0",

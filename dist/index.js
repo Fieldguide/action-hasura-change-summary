@@ -3,21 +3,42 @@ require('./sourcemap-register.js');module.exports =
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 4756:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.format = exports.diff = void 0;
+const core = __importStar(__nccwpck_require__(2186));
 const tables_1 = __nccwpck_require__(3951);
-function diff(oldMetadata, newMetadata) {
+function diff(oldMetadata, newMetadata, options = {}) {
+    core.debug(`Diff options:\n${JSON.stringify(options, null, 2)}`);
     return {
-        tables: tables_1.diffTables(oldMetadata.tables, newMetadata.tables)
+        tables: tables_1.diffTables(oldMetadata.tables, newMetadata.tables, options)
     };
 }
 exports.diff = diff;
-function format(change) {
-    return tables_1.formatTables(change.tables);
+function format(changes) {
+    return tables_1.formatTables(changes.tables);
 }
 exports.format = format;
 
@@ -48,11 +69,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.formatQualifiedTable = exports.formatTableChange = exports.formatTables = exports.diffTables = void 0;
+exports.formatQualifiedTable = exports.formatTableChange = exports.formatTables = exports.changeFromQualifiedTable = exports.diffTables = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const jsondiffpatch = __importStar(__nccwpck_require__(8468));
 const lodash_1 = __nccwpck_require__(250);
+const urlcat_1 = __importDefault(__nccwpck_require__(2019));
 const types_1 = __nccwpck_require__(6630);
 const diffPatcher = jsondiffpatch.create({
     objectHash(object, index) {
@@ -62,38 +87,46 @@ const diffPatcher = jsondiffpatch.create({
         return `index:${index}`;
     }
 });
-function diffTables(oldTables, newTables) {
+function diffTables(oldTables, newTables, options = {}) {
     core.info('Diffing table metadata');
     const tablesDelta = diffPatcher.diff(oldTables, newTables);
-    const change = {
+    const changes = {
         tracked: [],
         untracked: [],
         updated: []
     };
     if (undefined === tablesDelta) {
-        return change;
+        return changes;
     }
     lodash_1.forEach(tablesDelta, (delta, index) => {
         const tableIndex = Number(index);
         core.debug(`Processing delta: ${delta}`);
         if (types_1.isAddition(delta)) {
-            change.tracked.push(delta[0].table);
+            changes.tracked.push(changeFromQualifiedTable(delta[0].table, options));
         }
         else if (types_1.isDeletion(delta)) {
-            change.untracked.push(delta[0].table);
+            changes.untracked.push(changeFromQualifiedTable(delta[0].table, {}));
         }
         else if (isFinite(tableIndex)) {
-            change.updated.push(newTables[tableIndex].table);
+            changes.updated.push(changeFromQualifiedTable(newTables[tableIndex].table, options));
         }
     });
-    return change;
+    return changes;
 }
 exports.diffTables = diffTables;
-function formatTables(change) {
+function changeFromQualifiedTable({ schema, name }, { hasuraEndpoint }) {
+    const change = { schema, name };
+    if (hasuraEndpoint) {
+        change.consoleUrl = urlcat_1.default(hasuraEndpoint, '/console/data/schema/:schema/tables/:name/browse', { schema, name });
+    }
+    return change;
+}
+exports.changeFromQualifiedTable = changeFromQualifiedTable;
+function formatTables(changes) {
     core.info('Formatting table change');
-    return (formatTableChange('Tracked Tables', change.tracked) +
-        formatTableChange('Updated Tables', change.updated) +
-        formatTableChange('Untracked Tables', change.untracked)).trim();
+    return (formatTableChange('Tracked Tables', changes.tracked) +
+        formatTableChange('Updated Tables', changes.updated) +
+        formatTableChange('Untracked Tables', changes.untracked)).trim();
 }
 exports.formatTables = formatTables;
 function formatTableChange(header, tables) {
@@ -105,8 +138,12 @@ function formatTableChange(header, tables) {
         .join('\n')}\n\n`;
 }
 exports.formatTableChange = formatTableChange;
-function formatQualifiedTable(table) {
-    return `* \`${table.schema}.${table.name}\``;
+function formatQualifiedTable({ schema, name, consoleUrl }) {
+    let table = `\`${schema}.${name}\``;
+    if (consoleUrl) {
+        table = `[${table}](${consoleUrl})`;
+    }
+    return `* ${table}`;
 }
 exports.formatQualifiedTable = formatQualifiedTable;
 
@@ -412,10 +449,12 @@ function run() {
             const newMetadata = yield new WorkspaceLoader_1.WorkspaceLoader((_a = process.env.GITHUB_WORKSPACE) !== null && _a !== void 0 ? _a : '').load(projectDir);
             core.endGroup();
             core.startGroup('Comparing metadata changes');
-            const change = diff_1.diff(oldMetadata, newMetadata);
+            const changes = diff_1.diff(oldMetadata, newMetadata, {
+                hasuraEndpoint: core.getInput('hasura_endpoint')
+            });
             core.endGroup();
-            core.setOutput('change', change);
-            core.setOutput('change_markdown', diff_1.format(change));
+            core.setOutput('change', changes);
+            core.setOutput('change_markdown', diff_1.format(changes));
         }
         catch (error) {
             core.setFailed(error.message);
@@ -34409,6 +34448,151 @@ function getUserAgent() {
 
 exports.getUserAgent = getUserAgent;
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 2019:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.join = exports.subst = exports.query = void 0;
+function urlcat(baseUrlOrTemplate, pathTemplateOrParams, maybeParams) {
+    if (maybeParams === void 0) { maybeParams = {}; }
+    if (typeof pathTemplateOrParams === 'string') {
+        var baseUrl = baseUrlOrTemplate;
+        var pathTemplate = pathTemplateOrParams;
+        var params = maybeParams;
+        return urlcatImpl(pathTemplate, params, baseUrl);
+    }
+    else {
+        var baseTemplate = baseUrlOrTemplate;
+        var params = pathTemplateOrParams;
+        return urlcatImpl(baseTemplate, params);
+    }
+}
+exports.default = urlcat;
+function urlcatImpl(pathTemplate, params, baseUrl) {
+    var _a = path(pathTemplate, params), renderedPath = _a.renderedPath, remainingParams = _a.remainingParams;
+    var cleanParams = removeNullOrUndef(remainingParams);
+    var renderedQuery = query(cleanParams);
+    var pathAndQuery = join(renderedPath, '?', renderedQuery);
+    return baseUrl
+        ? join(baseUrl, '/', pathAndQuery)
+        : pathAndQuery;
+}
+/**
+ * Creates a query string from the specified object.
+ *
+ * @param {Object} params an object to convert into a query string.
+ *
+ * @returns {String} Query string.
+ *
+ * @example
+ * ```ts
+ * query({ id: 42, search: 'foo' })
+ * // -> 'id=42&search=foo'
+ * ```
+ */
+function query(params) {
+    return new URLSearchParams(params).toString();
+}
+exports.query = query;
+/**
+ * Substitutes :params in a template with property values of an object.
+ *
+ * @param {String} template a string that contains :params.
+ * @param {Object} params an object with keys that correspond to the params in the template.
+ *
+ * @returns {String} Rendered path after substitution.
+ *
+ * @example
+ * ```ts
+ * subst('/users/:id/posts/:postId', { id: 42, postId: 36 })
+ * // -> '/users/42/posts/36'
+ * ```
+ */
+function subst(template, params) {
+    var renderedPath = path(template, params).renderedPath;
+    return renderedPath;
+}
+exports.subst = subst;
+function path(template, params) {
+    var remainingParams = __assign({}, params);
+    var allowedTypes = ["boolean", "string", "number"];
+    var renderedPath = template.replace(/:\w+/g, function (p) {
+        var key = p.slice(1);
+        if (/^\d+$/.test(key)) {
+            return p;
+        }
+        if (!params.hasOwnProperty(key)) {
+            throw new Error("Missing value for path parameter " + key + ".");
+        }
+        if (!allowedTypes.includes(typeof params[key])) {
+            throw new TypeError("Path parameter " + key + " cannot be of type " + typeof params[key] + ". " +
+                ("Allowed types are: " + allowedTypes.join(', ') + "."));
+        }
+        if (typeof params[key] === "string" && params[key].trim() === '') {
+            throw new Error("Path parameter " + key + " cannot be an empty string.");
+        }
+        delete remainingParams[key];
+        return encodeURIComponent(params[key]);
+    });
+    return { renderedPath: renderedPath, remainingParams: remainingParams };
+}
+/**
+ * Joins two strings using a separator.
+ * If the separator occurs at the concatenation boundary in either of the strings, it is removed.
+ * This prevents accidental duplication of the separator.
+ *
+ * @param {String} part1 First string.
+ * @param {String} separator Separator used for joining.
+ * @param {String} part2 Second string.
+ *
+ * @returns {String} Joined string.
+ *
+ * @example
+ * ```ts
+ * join('first/', '/', '/second')
+ * // -> 'first/second'
+ * ```
+ */
+function join(part1, separator, part2) {
+    var p1 = part1.endsWith(separator)
+        ? part1.slice(0, -separator.length)
+        : part1;
+    var p2 = part2.startsWith(separator)
+        ? part2.slice(separator.length)
+        : part2;
+    return p1 === '' || p2 === ''
+        ? p1 + p2
+        : p1 + separator + p2;
+}
+exports.join = join;
+function removeNullOrUndef(params) {
+    return Object.keys(params)
+        .filter(function (k) { return notNullOrUndefined(params[k]); })
+        .reduce(function (result, k) {
+        result[k] = params[k];
+        return result;
+    }, {});
+}
+function notNullOrUndefined(v) {
+    return v !== undefined && v !== null;
+}
 
 
 /***/ }),
