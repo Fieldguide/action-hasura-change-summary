@@ -1,6 +1,6 @@
 name: 'Hasura Change Summary'
 description: 'Generate readable Hasura metadata change summaries'
-author: 'namoscato'
+author: 'Fieldguide'
 inputs:
   github_token:
     required: true

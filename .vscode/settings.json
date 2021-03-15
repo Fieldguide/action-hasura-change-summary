@@ -1,6 +1,7 @@
 {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "cSpell.words": [
+        "Fieldguide",
         "Octokit",
         "hasura",
         "jsondiffpatch",
