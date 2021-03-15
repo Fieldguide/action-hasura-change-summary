@@ -23,6 +23,7 @@ jobs:
         id: hasura-change
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
