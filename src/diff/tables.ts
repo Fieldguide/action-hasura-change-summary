@@ -2,7 +2,15 @@ import * as core from '@actions/core'
 import {QualifiedTable, TableEntry} from '@hasura/metadata'
 import * as jsondiffpatch from 'jsondiffpatch'
 import {forEach} from 'lodash'
-import {isAddition, isDeletion, isTableEntry, TableChange} from './types'
+import urlcat from 'urlcat'
+import {
+  DiffOptions,
+  isAddition,
+  isDeletion,
+  isTableEntry,
+  TableChange,
+  TableChanges
+} from './types'
 
 const diffPatcher = jsondiffpatch.create({
   objectHash(object: any, index: number) {
@@ -16,18 +24,19 @@ const diffPatcher = jsondiffpatch.create({
 
 export function diffTables(
   oldTables: TableEntry[],
-  newTables: TableEntry[]
-): TableChange {
+  newTables: TableEntry[],
+  options: DiffOptions = {}
+): TableChanges {
   core.info('Diffing table metadata')
   const tablesDelta = diffPatcher.diff(oldTables, newTables)
-  const change: TableChange = {
+  const changes: TableChanges = {
     tracked: [],
     untracked: [],
     updated: []
   }
 
   if (undefined === tablesDelta) {
-    return change
+    return changes
   }
 
   forEach(tablesDelta, (delta: any, index: string) => {
@@ -36,30 +45,49 @@ export function diffTables(
     core.debug(`Processing delta: ${delta}`)
 
     if (isAddition<TableEntry>(delta)) {
-      change.tracked.push(delta[0].table)
+      changes.tracked.push(changeFromQualifiedTable(delta[0].table, options))
     } else if (isDeletion<TableEntry>(delta)) {
-      change.untracked.push(delta[0].table)
+      changes.untracked.push(changeFromQualifiedTable(delta[0].table, {}))
     } else if (isFinite(tableIndex)) {
-      change.updated.push(newTables[tableIndex].table)
+      changes.updated.push(
+        changeFromQualifiedTable(newTables[tableIndex].table, options)
+      )
     }
   })
+
+  return changes
+}
+
+export function changeFromQualifiedTable(
+  {schema, name}: QualifiedTable,
+  {hasuraEndpoint}: DiffOptions
+): TableChange {
+  const change: TableChange = {schema, name}
+
+  if (hasuraEndpoint) {
+    change.consoleUrl = urlcat(
+      hasuraEndpoint,
+      '/console/data/schema/:schema/tables/:name/browse',
+      {schema, name}
+    )
+  }
 
   return change
 }
 
-export function formatTables(change: TableChange): string {
+export function formatTables(changes: TableChanges): string {
   core.info('Formatting table change')
 
   return (
-    formatTableChange('Tracked Tables', change.tracked) +
-    formatTableChange('Updated Tables', change.updated) +
-    formatTableChange('Untracked Tables', change.untracked)
+    formatTableChange('Tracked Tables', changes.tracked) +
+    formatTableChange('Updated Tables', changes.updated) +
+    formatTableChange('Untracked Tables', changes.untracked)
   ).trim()
 }
 
 export function formatTableChange(
   header: string,
-  tables: QualifiedTable[]
+  tables: TableChange[]
 ): string {
   if (0 === tables.length) {
     return ''
@@ -70,6 +98,16 @@ export function formatTableChange(
     .join('\n')}\n\n`
 }
 
-export function formatQualifiedTable(table: QualifiedTable): string {
-  return `* \`${table.schema}.${table.name}\``
+export function formatQualifiedTable({
+  schema,
+  name,
+  consoleUrl
+}: TableChange): string {
+  let table = `\`${schema}.${name}\``
+
+  if (consoleUrl) {
+    table = `[${table}](${consoleUrl})`
+  }
+
+  return `* ${table}`
 }

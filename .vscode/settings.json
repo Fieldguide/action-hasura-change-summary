@@ -5,6 +5,7 @@
         "Octokit",
         "hasura",
         "jsondiffpatch",
-        "untracked"
+        "untracked",
+        "urlcat"
     ]
 }

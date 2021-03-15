@@ -33,7 +33,8 @@
     "@hasura/metadata": "^1.0.2",
     "js-yaml": "^4.0.0",
     "jsondiffpatch": "^0.4.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "urlcat": "^2.0.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
