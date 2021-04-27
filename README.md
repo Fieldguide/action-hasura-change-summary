@@ -32,15 +32,14 @@ jobs:
 
 ## Inputs
 
-| input              | default | description                                                         |
-| ------------------ | ------- | ------------------------------------------------------------------- |
-| **`github_token`** |         | `GITHUB_TOKEN` secret                                               |
-| `project_dir`      | `'.'`   | Hasura project directory, relative to `GITHUB_WORKSPACE`            |
-| `hasura_endpoint`  |         | Hasura GraphQL engine http(s) endpoint, used for deep console links |
+| input              | description                                                               |
+| ------------------ | ------------------------------------------------------------------------- |
+| **`github_token`** | `GITHUB_TOKEN` secret                                                     |
+| `project_dir`      | Hasura project directory, relative to `GITHUB_WORKSPACE`; defaults to `.` |
+| `hasura_endpoint`  | Hasura GraphQL engine http(s) endpoint, used for deep console links       |
 
 ## Outputs
 
-| output            | description             |
-| ----------------- | ----------------------- |
-| `change`          | Structured change JSON  |
-| `change_markdown` | Markdown change summary |
+| output        | description         |
+| ------------- | ------------------- |
+| `change_html` | HTML change summary |

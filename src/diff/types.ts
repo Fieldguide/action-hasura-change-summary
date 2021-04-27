@@ -1,18 +1,71 @@
-import {QualifiedTable, TableEntry} from '@hasura/metadata'
-import {isArray, isObject, isString} from 'lodash'
+import {
+  DeletePermissionEntry,
+  InsertPermissionEntry,
+  QualifiedTable,
+  SelectPermissionEntry,
+  UpdatePermissionEntry
+} from '@hasura/metadata'
 
-export type TableChangeType = 'tracked' | 'untracked' | 'updated'
+/* #region changes */
+export const ChangeTypes = ['added', 'modified', 'deleted'] as const
 
-export interface TableChange extends QualifiedTable {
-  consoleUrl?: string
+export type ChangeType = typeof ChangeTypes[number]
+
+export interface ConsoleLink {
+  console: {
+    href: string
+  }
 }
 
-export type TableChanges = Record<TableChangeType, TableChange[]>
+/**
+ * Resembles Hypertext Application Language (HAL)
+ *
+ * @see https://stateless.group/hal_specification.html
+ */
+export interface LinkableChange {
+  _links?: ConsoleLink
+}
+
+export const TablePermissions = [
+  'insert_permissions',
+  'select_permissions',
+  'update_permissions',
+  'delete_permissions'
+] as const
+
+export type TablePermission = typeof TablePermissions[number]
+
+export interface TablePermissionChange {
+  role: string
+}
+
+export type TablePermissionChanges = Record<ChangeType, TablePermissionChange[]>
+
+export type TablePermissionsChanges = Record<
+  TablePermission,
+  TablePermissionChanges
+>
+
+export type TableChange = QualifiedTable & LinkableChange
+
+export interface TableEntryChange extends TablePermissionsChanges {
+  table: TableChange
+}
+
+export type TableEntryChanges = Record<ChangeType, TableEntryChange[]>
 
 export interface Changes {
-  tables: TableChanges
+  tables: TableEntryChanges
 }
+/* #endregion */
 
+export type PermissionEntry =
+  | InsertPermissionEntry
+  | SelectPermissionEntry
+  | UpdatePermissionEntry
+  | DeletePermissionEntry
+
+/* #region jsondiffpatch */
 export type DeltaAddition<T> = [T]
 
 export type DeltaDeletion<T> = [T, 0, 0]
@@ -24,30 +77,7 @@ export type Delta<T> =
   | DeltaAddition<T>
   | DeltaDeletion<T>
   | DeltaModificationConventional<T>
-
-export function isTableEntry(object: any): object is TableEntry {
-  return (
-    isObject(object.table) &&
-    isString(object.table.schema) &&
-    isString(object.table.name)
-  )
-}
-
-export function isAddition<T>(delta: any): delta is DeltaAddition<T> {
-  return isArray(delta) && 1 === delta.length
-}
-
-export function isDeletion<T>(delta: any): delta is DeltaDeletion<T> {
-  return (
-    isArray(delta) && 3 === delta.length && 0 === delta[1] && 0 === delta[2]
-  )
-}
-
-export function isConventionalModification<T>(
-  delta: any
-): delta is DeltaModificationConventional<T> {
-  return isArray(delta) && 2 === delta.length
-}
+/* #endregion */
 
 export interface DiffOptions {
   /** Hasura GraphQL engine http(s) endpoint, used for deep console links */

@@ -1,0 +1,40 @@
+- table:
+    schema: public
+    name: users
+  insert_permissions:
+  - role: manager
+    permission:
+      check: {}
+      columns:
+      - name
+      backend_only: false
+  select_permissions:
+  - role: manager
+    permission:
+      columns:
+      - name
+      - created_at
+      - last_login_at
+      - id
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - id
+      - name
+      - created_at
+      - last_login_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: manager
+    permission:
+      columns:
+      - name
+      filter: {}
+      check: null
+  delete_permissions:
+  - role: manager
+    permission:
+      filter: {}

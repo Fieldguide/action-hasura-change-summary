@@ -1,0 +1,19 @@
+<table>
+  <thead>
+    <tr>
+      {{#headRow}}
+      <th>{{.}}</th>
+      {{/headRow}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#body}}
+      <tr>
+        <th>{{role}}</th>
+        {{#cells}}
+          <td>{{.}}</td>
+        {{/cells}}
+      </tr>
+    {{/body}}
+  </tbody>
+</table>
