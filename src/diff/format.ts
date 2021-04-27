@@ -1,20 +1,19 @@
-import * as Mustache from 'mustache'
 import {readFileSync} from 'fs'
-import {join} from 'path'
+import * as Mustache from 'mustache'
 import prettier from 'prettier'
 
 export function renderTemplate(
-  paths: string[],
+  path: string,
   view: any,
-  partialPaths: Record<string, string[]> = {}
+  partialPaths: Record<string, string> = {}
 ): string {
   return prettier.format(
     Mustache.render(
-      readPaths(paths),
+      readFileSync(path, 'utf8'),
       view,
       Object.entries(partialPaths).reduce<Record<string, string>>(
-        (partials, [name, _paths]) => {
-          partials[name] = readPaths(_paths)
+        (partials, [name, _path]) => {
+          partials[name] = readFileSync(_path, 'utf8')
 
           return partials
         },
@@ -23,8 +22,4 @@ export function renderTemplate(
     ),
     {parser: 'html'}
   )
-}
-
-export function readPaths(paths: string[]): string {
-  return readFileSync(join(...paths), 'utf8')
 }

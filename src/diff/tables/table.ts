@@ -33,7 +33,7 @@ export function formatTableEntryChange(
   }
 
   return renderTemplate(
-    [__dirname, 'table.mustache'],
+    require.resolve('./table.mustache'),
     {
       heading,
       tables: tableEntries.map(({table, ...tablePermissions}) => ({
@@ -42,7 +42,7 @@ export function formatTableEntryChange(
       }))
     },
     {
-      permissions: [__dirname, 'permissions.mustache']
+      permissions: require.resolve('./permissions.mustache')
     }
   )
 }

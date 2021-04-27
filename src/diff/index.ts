@@ -23,5 +23,5 @@ export function format(changes: Changes): string {
     return ''
   }
 
-  return renderTemplate([__dirname, 'change.mustache'], {tables})
+  return renderTemplate(require.resolve('./change.mustache'), {tables})
 }
