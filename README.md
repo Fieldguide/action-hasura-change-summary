@@ -4,6 +4,8 @@
 
 [GitHub Action](https://github.com/features/actions) to generate readable [Hasura](https://hasura.io/) metadata change summaries.
 
+<img src="https://i.imgur.com/icF3zBn.png" alt="Hasura Change Summary example comment" width="550">
+
 ## Usage
 
 For example, with marocchino's [Sticky Pull Request Comment](https://github.com/marocchino/sticky-pull-request-comment):
@@ -19,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: Fieldguide/action-hasura-change-summary@v1
+      - uses: Fieldguide/action-hasura-change-summary@v2
         id: hasura-change
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
