@@ -4,7 +4,7 @@
 
 [GitHub Action](https://github.com/features/actions) to generate readable [Hasura](https://hasura.io/) metadata change summaries.
 
-<img src="https://i.imgur.com/icF3zBn.png" alt="Hasura Change Summary example comment" width="550">
+<img src="https://i.imgur.com/icF3zBn.png" alt="Hasura Change Summary example comment" width="699">
 
 ## Usage
 
