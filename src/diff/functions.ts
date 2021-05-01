@@ -1,5 +1,7 @@
 import {DeletePermissionEntry, TableEntry} from '@hasura/metadata'
 import {isArray, isObject, isString} from 'lodash'
+import * as Mustache from 'mustache'
+import prettier from 'prettier'
 import {
   ChangeType,
   DeltaAddition,
@@ -48,4 +50,14 @@ export function emptyChanges<T>(): Record<ChangeType, T[]> {
     modified: [],
     deleted: []
   }
+}
+
+export function renderTemplate(
+  template: string,
+  view: any,
+  partials: Record<string, string> = {}
+): string {
+  return prettier.format(Mustache.render(template, view, partials), {
+    parser: 'html'
+  })
 }

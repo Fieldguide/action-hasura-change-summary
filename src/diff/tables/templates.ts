@@ -30,7 +30,7 @@ export const PERMISSIONS_TEMPLATE = `<table>
     <tr>
       <th>{{role}}</th>
       {{#cells}}
-        <td>{{.}}</td>
+        <td align="center">{{.}}</td>
       {{/cells}}
     </tr>
   {{/body}}

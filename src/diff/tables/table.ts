@@ -1,6 +1,6 @@
-import {QualifiedTable} from '@hasura/metadata'
+import {QualifiedTable, TableEntry} from '@hasura/metadata'
 import urlcat from 'urlcat'
-import {renderTemplate} from '../format'
+import {renderTemplate} from '../functions'
 import {DiffOptions, TableChange, TableEntryChange} from '../types'
 import {viewFromTablePermissionChanges} from './permissions'
 import {PERMISSIONS_TEMPLATE, TABLE_TEMPLATE} from './templates'
@@ -46,4 +46,18 @@ export function formatTableEntryChange(
       permissions: PERMISSIONS_TEMPLATE
     }
   )
+}
+
+export function hashFromTable({schema, name}: QualifiedTable): string {
+  return `table:${schema}:${name}`
+}
+
+export function tableEntryPredicate(
+  table: QualifiedTable
+): (tableEntry: TableEntry) => boolean {
+  const tableHash = hashFromTable(table)
+
+  return (tableEntry: TableEntry): boolean => {
+    return hashFromTable(tableEntry.table) === tableHash
+  }
 }

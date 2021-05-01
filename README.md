@@ -27,7 +27,7 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          message: ${{ steps.hasura-change.outputs.change_markdown }}
+          message: ${{ steps.hasura-change.outputs.change_html }}
 ```
 
 ## Inputs

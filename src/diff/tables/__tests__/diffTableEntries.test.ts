@@ -205,6 +205,35 @@ describe('modified', () => {
   })
 })
 
+test('modified and deleted with table index changes', () => {
+  expect(
+    diff('todos_and_users', 'users_permissions/user_select_filtered')
+  ).toStrictEqual({
+    added: [],
+    modified: [
+      tableEntryChange(
+        {
+          schema: 'public',
+          name: 'users'
+        },
+        {
+          select_permissions: {
+            added: [],
+            modified: [{role: 'user'}],
+            deleted: []
+          }
+        }
+      )
+    ],
+    deleted: [
+      tableEntryChange({
+        schema: 'public',
+        name: 'todos'
+      })
+    ]
+  })
+})
+
 describe('deleted', () => {
   test('no endpoint', () => {
     expect(diff('users', 'empty')).toStrictEqual({

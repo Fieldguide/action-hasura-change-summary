@@ -99,10 +99,10 @@ test('added and modified', () => {
       <tbody>
         <tr>
           <th>user</th>
-          <td></td>
-          <td>➕</td>
-          <td></td>
-          <td></td>
+          <td align="center"></td>
+          <td align="center">➕</td>
+          <td align="center"></td>
+          <td align="center"></td>
         </tr>
       </tbody>
     </table>

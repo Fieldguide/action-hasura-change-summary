@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import {HasuraMetadataV2} from '@hasura/metadata'
-import {renderTemplate} from './format'
+import {renderTemplate} from './functions'
 import {diffTableEntries, formatTableEntries} from './tables'
 import {CHANGE_TEMPLATE} from './templates'
 import {Changes, DiffOptions} from './types'

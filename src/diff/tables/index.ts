@@ -5,12 +5,17 @@ import {forEach} from 'lodash'
 import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
 import {DiffOptions, TableEntryChange, TableEntryChanges} from '../types'
 import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
-import {changeFromQualifiedTable, formatTableEntryChange} from './table'
+import {
+  changeFromQualifiedTable,
+  formatTableEntryChange,
+  hashFromTable,
+  tableEntryPredicate
+} from './table'
 
 const diffPatcher = jsondiffpatch.create({
   objectHash(object: any, index: number) {
     if (isTableEntry(object)) {
-      return `table:${object.table.schema}:${object.table.name}`
+      return hashFromTable(object.table)
     }
 
     return `index:${index}`
@@ -52,13 +57,17 @@ export function diffTableEntries(
     } else if (isFinite(tableIndex)) {
       const newTableEntry = newTables[tableIndex]
       const {table} = newTableEntry
+      const oldTableEntry = oldTables.find(tableEntryPredicate(table))
+
+      if (!oldTableEntry) {
+        throw new Error(
+          `Error finding old table entry ${table.schema}.${table.name} at new index ${tableIndex}`
+        )
+      }
 
       core.startGroup(`+/- ${table.schema}.${table.name}`)
       changes.modified.push({
-        ...diffTablePermissions(
-          oldTables[tableIndex], // TODO: vet old index
-          newTableEntry
-        ),
+        ...diffTablePermissions(oldTableEntry, newTableEntry),
         table: changeFromQualifiedTable(table, options)
       })
       core.endGroup()
