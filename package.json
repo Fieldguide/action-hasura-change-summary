@@ -40,7 +40,7 @@
     "@types/jest": "^26.0.23",
     "@types/js-yaml": "^4.0.1",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^12.20.10",
+    "@types/node": "^12.20.11",
     "@typescript-eslint/parser": "^4.22.0",
     "@vercel/ncc": "^0.28.3",
     "eslint": "^7.25.0",
