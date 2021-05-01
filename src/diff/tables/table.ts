@@ -1,9 +1,9 @@
 import {QualifiedTable} from '@hasura/metadata'
-import {readFileSync} from 'fs'
 import urlcat from 'urlcat'
 import {renderTemplate} from '../format'
 import {DiffOptions, TableChange, TableEntryChange} from '../types'
 import {viewFromTablePermissionChanges} from './permissions'
+import {PERMISSIONS_TEMPLATE, TABLE_TEMPLATE} from './templates'
 import {consoleLinkFromUrl} from './utils'
 
 export function changeFromQualifiedTable(
@@ -34,7 +34,7 @@ export function formatTableEntryChange(
   }
 
   return renderTemplate(
-    readFileSync(require.resolve('./table.mustache'), 'utf-8'),
+    TABLE_TEMPLATE,
     {
       heading,
       tables: tableEntries.map(({table, ...tablePermissions}) => ({
@@ -43,10 +43,7 @@ export function formatTableEntryChange(
       }))
     },
     {
-      permissions: readFileSync(
-        require.resolve('./permissions.mustache'),
-        'utf-8'
-      )
+      permissions: PERMISSIONS_TEMPLATE
     }
   )
 }

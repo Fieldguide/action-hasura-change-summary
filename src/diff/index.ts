@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import {HasuraMetadataV2} from '@hasura/metadata'
-import {readFileSync} from 'fs'
 import {renderTemplate} from './format'
 import {diffTableEntries, formatTableEntries} from './tables'
+import {CHANGE_TEMPLATE} from './templates'
 import {Changes, DiffOptions} from './types'
 
 export function diff(
@@ -24,8 +24,5 @@ export function format(changes: Changes): string {
     return ''
   }
 
-  return renderTemplate(
-    readFileSync(require.resolve('./change.mustache'), 'utf-8'),
-    {tables}
-  )
+  return renderTemplate(CHANGE_TEMPLATE, {tables})
 }
