@@ -3,9 +3,15 @@
     "cSpell.words": [
         "Fieldguide",
         "Octokit",
+        "endregion",
         "hasura",
         "jsondiffpatch",
+        "todos",
         "untracked",
         "urlcat"
-    ]
+    ],
+    "files.exclude": {
+        "dist/": true,
+        "lib/": true
+    }
 }

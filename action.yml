@@ -13,10 +13,8 @@ inputs:
     required: false
     description: 'Hasura GraphQL engine http(s) endpoint, used for deep console links'
 outputs:
-  change:
-    description: 'Structured change JSON'
-  change_markdown:
-    description: 'Markdown change summary'
+  change_html:
+    description: 'HTML change summary'
 runs:
   using: 'node12'
   main: 'dist/index.js'

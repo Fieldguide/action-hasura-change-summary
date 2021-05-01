@@ -28,8 +28,7 @@ async function run(): Promise<void> {
     })
     core.endGroup()
 
-    core.setOutput('change', changes)
-    core.setOutput('change_markdown', format(changes))
+    core.setOutput('change_html', format(changes))
   } catch (error) {
     core.setFailed(error.message)
     core.debug(error.stack)
