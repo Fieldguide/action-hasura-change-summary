@@ -12,9 +12,15 @@ export function diff(
 ): Changes {
   core.debug(`Diff options:\n${JSON.stringify(options, null, 2)}`)
 
-  return {
-    tables: diffTableEntries(oldMetadata.tables, newMetadata.tables, options)
-  }
+  core.startGroup('Diffing table metadata')
+  const tables = diffTableEntries(
+    oldMetadata.tables,
+    newMetadata.tables,
+    options
+  )
+  core.endGroup()
+
+  return {tables}
 }
 
 export function format(changes: Changes): string {

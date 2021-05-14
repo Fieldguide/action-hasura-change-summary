@@ -61,3 +61,7 @@ export function renderTemplate(
     parser: 'html'
   })
 }
+
+export function tab(message: string, level = 0): string {
+  return '  '.repeat(1 + level) + message
+}

@@ -22,11 +22,9 @@ async function run(): Promise<void> {
     ).load(projectDir)
     core.endGroup()
 
-    core.startGroup('Comparing metadata changes')
     const changes = diff(oldMetadata, newMetadata, {
       hasuraEndpoint: core.getInput('hasura_endpoint')
     })
-    core.endGroup()
 
     core.setOutput('change_html', format(changes))
   } catch (error) {
