@@ -27,7 +27,6 @@ export function diffTableEntries(
   newTables: TableEntry[],
   options: DiffOptions = {}
 ): TableEntryChanges {
-  core.info('Diffing table metadata')
   const tablesDelta = diffPatcher.diff(oldTables, newTables)
   const changes = emptyChanges<TableEntryChange>()
 
@@ -65,12 +64,11 @@ export function diffTableEntries(
         )
       }
 
-      core.startGroup(`+/- ${table.schema}.${table.name}`)
+      core.info(`+/- ${table.schema}.${table.name}`)
       changes.modified.push({
         ...diffTablePermissions(oldTableEntry, newTableEntry),
         table: changeFromQualifiedTable(table, options)
       })
-      core.endGroup()
     }
   })
 

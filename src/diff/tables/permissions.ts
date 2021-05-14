@@ -7,7 +7,8 @@ import {
   isAddition,
   isDeletePermissionEntry,
   isDeletion,
-  isPermissionEntry
+  isPermissionEntry,
+  tab
 } from '../functions'
 import {
   ChangeType,
@@ -38,10 +39,11 @@ export function diffTablePermissions(
 ): TablePermissionsChanges {
   return TablePermissions.reduce<TablePermissionsChanges>(
     (changes, permission) => {
-      core.info(permission)
+      core.info(tab(permission))
       changes[permission] = diffPermissions(
         oldTable[permission] ?? [],
-        newTable[permission] ?? []
+        newTable[permission] ?? [],
+        1
       )
 
       return changes
@@ -52,7 +54,8 @@ export function diffTablePermissions(
 
 export function diffPermissions(
   oldPermissions: PermissionEntry[],
-  newPermissions: PermissionEntry[]
+  newPermissions: PermissionEntry[],
+  tabLevel?: number
 ): TablePermissionChanges {
   const permissionsDelta = diffPatcher.diff(
     oldPermissions.map(normalizePermissionEntry),
@@ -66,17 +69,17 @@ export function diffPermissions(
     if (isAddition<PermissionEntry>(delta)) {
       const role = delta[0].role
 
-      core.info(` + ${role}`)
+      core.info(tab(`+ ${role}`, tabLevel))
       changes.added.push({role})
     } else if (isDeletion<PermissionEntry>(delta)) {
       const role = delta[0].role
 
-      core.info(` - ${role}`)
+      core.info(tab(`- ${role}`, tabLevel))
       changes.deleted.push({role})
     } else if (isFinite(permissionIndex)) {
       const role = newPermissions[permissionIndex].role
 
-      core.info(` +/- ${role}`)
+      core.info(tab(`+/- ${role}`, tabLevel))
       changes.modified.push({role})
     }
   })
