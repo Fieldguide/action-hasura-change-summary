@@ -13,12 +13,21 @@ test('no change', () => {
 
 describe('added', () => {
   test('no endpoint', () => {
-    expect(diff('empty', 'users')).toStrictEqual({
+    expect(diff('empty', 'users_permissions/user_select_full')).toStrictEqual({
       added: [
-        tableEntryChange({
-          schema: 'public',
-          name: 'users'
-        })
+        tableEntryChange(
+          {
+            schema: 'public',
+            name: 'users'
+          },
+          {
+            select_permissions: {
+              added: [{role: 'user'}],
+              modified: [],
+              deleted: []
+            }
+          }
+        )
       ],
       modified: [],
       deleted: []

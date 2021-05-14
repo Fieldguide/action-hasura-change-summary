@@ -38,11 +38,12 @@ export function diffTableEntries(
     const tableIndex = Number(index)
 
     if (isAddition<TableEntry>(delta)) {
-      const table = delta[0].table
+      const tableEntry = delta[0]
+      const {table} = tableEntry
 
       core.info(`+ ${table.schema}.${table.name}`)
       changes.added.push({
-        ...emptyTablePermissionsChanges(),
+        ...diffTablePermissions({table}, tableEntry),
         table: changeFromQualifiedTable(table, options)
       })
     } else if (isDeletion<TableEntry>(delta)) {
