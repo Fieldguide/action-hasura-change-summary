@@ -28,7 +28,7 @@
   "author": "Nick Amoscato <nick@amoscato.com>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.2.7",
     "@actions/github": "^4.0.0",
     "@hasura/metadata": "^1.0.2",
     "js-yaml": "^4.0.0",
