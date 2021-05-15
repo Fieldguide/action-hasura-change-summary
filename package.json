@@ -6,12 +6,12 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
-    "all": "npm run build && npm run format-check && npm run lint && npm run package && npm test"
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "jsondiffpatch": "^0.4.1",
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
-    "prettier": "^2.2.1",
+    "prettier": "^2.3.0",
     "urlcat": "^2.0.4"
   },
   "devDependencies": {

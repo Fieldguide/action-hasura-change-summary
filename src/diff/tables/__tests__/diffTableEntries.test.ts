@@ -46,8 +46,7 @@ describe('added', () => {
           name: 'users',
           _links: {
             console: {
-              href:
-                'http://localhost:8080/console/data/schema/public/tables/users/modify'
+              href: 'http://localhost:8080/console/data/schema/public/tables/users/modify'
             }
           }
         })
