@@ -44,7 +44,7 @@
     "@types/lodash": "^4.14.170",
     "@types/mustache": "^4.1.1",
     "@types/node": "^12.20.13",
-    "@typescript-eslint/parser": "^4.23.0",
+    "@typescript-eslint/parser": "^4.28.1",
     "@vercel/ncc": "^0.28.6",
     "eslint": "^7.26.0",
     "eslint-plugin-github": "^4.1.3",
