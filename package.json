@@ -35,13 +35,13 @@
     "jsondiffpatch": "^0.4.1",
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
-    "prettier": "^2.3.0",
+    "prettier": "^2.3.2",
     "urlcat": "^2.0.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/js-yaml": "^4.0.1",
-    "@types/lodash": "^4.14.169",
+    "@types/lodash": "^4.14.170",
     "@types/mustache": "^4.1.1",
     "@types/node": "^12.20.13",
     "@typescript-eslint/parser": "^4.23.0",
