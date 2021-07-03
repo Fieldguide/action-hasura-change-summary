@@ -30,9 +30,7 @@ test('added', () => {
   </li>
   <li>
     <p>
-      <a href="URL">
-        <code>public.todos</code>
-      </a>
+      <a href="URL"><code>public.todos</code></a>
     </p>
   </li>
 </ul>`
@@ -73,9 +71,7 @@ test('added and modified', () => {
 <ul>
   <li>
     <p>
-      <a href="URL">
-        <code>public.users</code>
-      </a>
+      <a href="URL"><code>public.users</code></a>
     </p>
   </li>
 </ul>
