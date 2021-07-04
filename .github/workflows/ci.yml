@@ -34,4 +34,4 @@ jobs:
       - uses: ./
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          project_dir: '__tests__/fixtures'
+          project_dir: '__tests__/fixtures/v2'

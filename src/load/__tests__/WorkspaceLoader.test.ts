@@ -7,19 +7,19 @@ describe('WorkspaceLoader', () => {
     target = new WorkspaceLoader('./')
   })
 
-  test('load', () => {
-    target.load('fixtures').then(metadata => {
-      expect(metadata).toStrictEqual({
-        version: 2,
-        tables: [
-          {
-            table: {
-              schema: 'public',
-              name: 'users'
-            }
+  test('load v2', async () => {
+    const metadata = await target.load('./__tests__/fixtures/v2')
+
+    expect(metadata).toStrictEqual({
+      version: 2,
+      tables: [
+        {
+          table: {
+            schema: 'public',
+            name: 'users'
           }
-        ]
-      })
+        }
+      ]
     })
   })
 })
