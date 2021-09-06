@@ -1,5 +1,4 @@
 import * as core from '@actions/core'
-import {TableEntry} from '@hasura/metadata'
 import * as jsondiffpatch from 'jsondiffpatch'
 import {forEach, isArray} from 'lodash'
 import {
@@ -14,6 +13,7 @@ import {
   ChangeType,
   ChangeTypes,
   PermissionEntry,
+  TableEntry,
   TablePermission,
   TablePermissionChange,
   TablePermissionChanges,

@@ -1,11 +1,13 @@
-import {HasuraMetadataV2} from '@hasura/metadata'
-import {readFileSync} from 'fs'
+import {RequestParameters} from '@octokit/types'
+import {lstatSync, readdirSync, readFileSync} from 'fs'
+import {isString} from 'lodash'
 import {join} from 'path'
 import {GitHubLoader} from '../GitHubLoader'
+import {HasuraMetadata, TreeEntry} from '../types'
 
 describe('GitHubLoader', () => {
   let target: GitHubLoader
-  let metadata: HasuraMetadataV2
+  let metadata: HasuraMetadata
   let octokit: any
 
   beforeEach(() => {
@@ -21,16 +23,16 @@ describe('GitHubLoader', () => {
     )
   })
 
-  describe('load', () => {
+  describe('load v2', () => {
     describe('empty', () => {
       beforeEach(async () => {
         octokit.graphql = jest.fn(() => ({
           repository: {
-            metadata: null
+            object: null
           }
         }))
 
-        metadata = await target.load('src')
+        metadata = await target.load('src', true)
       })
 
       it('should make GraphQL call', () => {
@@ -43,8 +45,8 @@ describe('GitHubLoader', () => {
 
       it('should return empty metadata', () => {
         expect(metadata).toStrictEqual({
-          version: 2,
-          tables: []
+          version: 3,
+          databases: []
         })
       })
     })
@@ -53,21 +55,10 @@ describe('GitHubLoader', () => {
       beforeEach(async () => {
         octokit.graphql = jest.fn(() => ({
           repository: {
-            metadata: {
-              entries: [
-                {
-                  name: 'tables.yaml',
-                  object: {
-                    text: readFixture('tables')
-                  }
-                },
-                {
-                  name: 'version.yaml',
-                  object: {
-                    text: readFixture('version')
-                  }
-                }
-              ]
+            object: {
+              entries: treeEntryFixtures(
+                join('__tests__', 'fixtures', 'v2', 'metadata')
+              )
             }
           }
         }))
@@ -83,26 +74,106 @@ describe('GitHubLoader', () => {
         })
       })
 
-      it('should return empty metadata', () => {
+      it('should return metadata', () => {
         expect(metadata).toStrictEqual({
-          version: 2,
-          tables: [
+          __converted_from: 2,
+          version: 3,
+          databases: [
             {
-              table: {
-                schema: 'public',
-                name: 'users'
-              }
+              name: 'default',
+              tables: [
+                {
+                  table: {
+                    schema: 'public',
+                    name: 'users'
+                  }
+                }
+              ]
             }
           ]
         })
       })
     })
   })
+
+  describe('load v3', () => {
+    beforeEach(async () => {
+      octokit.graphql = jest.fn(
+        (_query: string, {objectExpression}: RequestParameters) => {
+          if (!isString(objectExpression)) {
+            throw new Error('objectExpression is not a string')
+          }
+
+          const directory = objectExpression.slice('main:'.length)
+
+          return {
+            repository: {
+              object: {
+                entries: treeEntryFixtures(
+                  join('__tests__', 'fixtures', 'v3', directory)
+                )
+              }
+            }
+          }
+        }
+      )
+
+      metadata = await target.load('.')
+    })
+
+    const expectedObjectExpression: string[] = [
+      'main:metadata',
+      'main:metadata/databases',
+      'main:metadata/databases/default/tables'
+    ]
+
+    it(`should make ${expectedObjectExpression.length} GraphQL calls`, () => {
+      for (const objectExpression of expectedObjectExpression) {
+        expect(octokit.graphql).toHaveBeenCalledWith(expect.any(String), {
+          owner: 'OWNER',
+          repo: 'REPO',
+          objectExpression
+        })
+      }
+
+      expect(octokit.graphql.mock.calls.length).toStrictEqual(
+        expectedObjectExpression.length
+      )
+    })
+
+    it('should return metadata', () => {
+      expect(metadata).toStrictEqual({
+        version: 3,
+        databases: [
+          {
+            name: 'default',
+            kind: 'postgres',
+            tables: [
+              {
+                table: {
+                  schema: 'public',
+                  name: 'users'
+                }
+              }
+            ]
+          }
+        ]
+      })
+    })
+  })
 })
 
-function readFixture(property: keyof HasuraMetadataV2): string {
-  return readFileSync(
-    join('__tests__', 'fixtures', 'v2', 'metadata', `${property}.yaml`),
-    'utf8'
-  )
+function treeEntryFixtures(directory: string): TreeEntry<any>[] {
+  return readdirSync(directory).map<TreeEntry<any>>(name => {
+    const path = join(directory, name)
+
+    if (lstatSync(path).isFile()) {
+      return {
+        name,
+        object: {text: readFileSync(path, 'utf8')}
+      }
+    }
+
+    return {name, object: {}}
+  })
 }

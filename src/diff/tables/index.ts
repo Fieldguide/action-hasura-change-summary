@@ -1,9 +1,13 @@
 import * as core from '@actions/core'
-import {TableEntry} from '@hasura/metadata'
 import * as jsondiffpatch from 'jsondiffpatch'
 import {forEach} from 'lodash'
 import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
-import {DiffOptions, TableEntryChange, TableEntryChanges} from '../types'
+import {
+  DiffOptions,
+  TableEntry,
+  TableEntryChange,
+  TableEntryChanges
+} from '../types'
 import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
 import {
   changeFromQualifiedTable,

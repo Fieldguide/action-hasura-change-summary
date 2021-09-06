@@ -1,13 +1,15 @@
-import {DeletePermissionEntry, TableEntry} from '@hasura/metadata'
+import {DeletePermissionEntry} from '@hasura/metadata'
 import {isArray, isObject, isString} from 'lodash'
 import * as Mustache from 'mustache'
 import prettier from 'prettier'
+import {HasuraMetadataLatest} from '../load/types'
 import {
   ChangeType,
   DeltaAddition,
   DeltaDeletion,
   DeltaModificationConventional,
-  PermissionEntry
+  PermissionEntry,
+  TableEntry
 } from './types'
 
 export function isTableEntry(object: any): object is TableEntry {
@@ -64,4 +66,21 @@ export function renderTemplate(
 
 export function tab(message: string, level = 0): string {
   return '  '.repeat(1 + level) + message
+}
+
+export function tablesFromMetadata(
+  metadata: HasuraMetadataLatest
+): TableEntry[] {
+  return metadata.databases.reduce<TableEntry[]>((tables, database) => {
+    return [
+      ...tables,
+      ...database.tables.map<TableEntry>(({table, ...tableEntry}) => ({
+        ...tableEntry,
+        table: {
+          ...table,
+          database: 2 === metadata.__converted_from ? undefined : database.name
+        }
+      }))
+    ]
+  }, [])
 }

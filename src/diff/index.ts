@@ -1,21 +1,21 @@
 import * as core from '@actions/core'
-import {HasuraMetadataV2} from '@hasura/metadata'
-import {renderTemplate} from './functions'
+import {HasuraMetadataLatest} from './../load/types'
+import {renderTemplate, tablesFromMetadata} from './functions'
 import {diffTableEntries, formatTableEntries} from './tables'
 import {CHANGE_TEMPLATE} from './templates'
 import {Changes, DiffOptions} from './types'
 
 export function diff(
-  oldMetadata: HasuraMetadataV2,
-  newMetadata: HasuraMetadataV2,
+  oldMetadata: HasuraMetadataLatest,
+  newMetadata: HasuraMetadataLatest,
   options: DiffOptions = {}
 ): Changes {
   core.debug(`Diff options:\n${JSON.stringify(options, null, 2)}`)
 
   core.startGroup('Diffing table metadata')
   const tables = diffTableEntries(
-    oldMetadata.tables,
-    newMetadata.tables,
+    tablesFromMetadata(oldMetadata),
+    tablesFromMetadata(newMetadata),
     options
   )
   core.endGroup()

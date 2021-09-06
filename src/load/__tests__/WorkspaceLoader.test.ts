@@ -11,13 +11,41 @@ describe('WorkspaceLoader', () => {
     const metadata = await target.load('./__tests__/fixtures/v2')
 
     expect(metadata).toStrictEqual({
-      version: 2,
-      tables: [
+      __converted_from: 2,
+      version: 3,
+      databases: [
         {
-          table: {
-            schema: 'public',
-            name: 'users'
-          }
+          name: 'default',
+          tables: [
+            {
+              table: {
+                schema: 'public',
+                name: 'users'
+              }
+            }
+          ]
+        }
+      ]
+    })
+  })
+
+  test('load v3', async () => {
+    const metadata = await target.load('./__tests__/fixtures/v3')
+
+    expect(metadata).toStrictEqual({
+      version: 3,
+      databases: [
+        {
+          name: 'default',
+          kind: 'postgres',
+          tables: [
+            {
+              table: {
+                schema: 'public',
+                name: 'users'
+              }
+            }
+          ]
         }
       ]
     })
