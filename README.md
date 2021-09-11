@@ -15,7 +15,7 @@ name: ci
 on:
   pull_request:
     paths:
-      - 'metadata/*.yaml'
+      - 'metadata/**.yaml'
 jobs:
   hasura-change-summary:
     runs-on: ubuntu-latest
