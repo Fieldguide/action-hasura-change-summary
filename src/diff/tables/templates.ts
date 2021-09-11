@@ -4,7 +4,7 @@ export const TABLE_TEMPLATE = `<h3>{{heading}}</h3>
   <li>
     {{#table}}
       <p>
-        {{#_links}}<a href="{{console.href}}">{{/_links}}<code>{{schema}}.{{name}}</code>{{#_links}}</a>{{/_links}}
+        {{#_links}}<a href="{{console.href}}">{{/_links}}<code>{{#database}}{{.}}.{{/database}}{{schema}}.{{name}}</code>{{#_links}}</a>{{/_links}}
         {{#permissions}}permissions:{{/permissions}}
       </p>
       {{#permissions}}

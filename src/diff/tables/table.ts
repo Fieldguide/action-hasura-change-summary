@@ -16,7 +16,7 @@ export function changeFromQualifiedTable(
   {database, schema, name}: QualifiedTable,
   {hasuraEndpoint}: DiffOptions
 ): TableChange {
-  const change: TableChange = {schema, name}
+  const change: TableChange = {database, schema, name}
 
   if (hasuraEndpoint) {
     change._links = consoleLinkFromUrl(

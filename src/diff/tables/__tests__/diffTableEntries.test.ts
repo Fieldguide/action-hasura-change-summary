@@ -1,5 +1,6 @@
 import {TableEntry} from '@hasura/metadata'
 import {diffTableEntries} from '..'
+import {qualifyTableEntry} from '../../functions'
 import {DiffOptions, TableEntryChanges} from '../../types'
 import {loadFixture, tableEntryChange} from './utils'
 
@@ -17,6 +18,7 @@ describe('added', () => {
       added: [
         tableEntryChange(
           {
+            database: undefined,
             schema: 'public',
             name: 'users'
           },
@@ -34,25 +36,56 @@ describe('added', () => {
     })
   })
 
-  test('with configured endpoint', () => {
-    expect(
-      diff('empty', 'users', {
-        hasuraEndpoint: 'http://localhost:8080/'
-      })
-    ).toStrictEqual({
-      added: [
-        tableEntryChange({
-          schema: 'public',
-          name: 'users',
-          _links: {
-            console: {
-              href: 'http://localhost:8080/console/data/schema/public/tables/users/modify'
-            }
-          }
+  describe('with configured endpoint', () => {
+    test('v2', () => {
+      expect(
+        diff('empty', 'users', {
+          hasuraEndpoint: 'http://localhost:8080/'
         })
-      ],
-      modified: [],
-      deleted: []
+      ).toStrictEqual({
+        added: [
+          tableEntryChange({
+            database: undefined,
+            schema: 'public',
+            name: 'users',
+            _links: {
+              console: {
+                href: 'http://localhost:8080/console/data/schema/public/tables/users/modify'
+              }
+            }
+          })
+        ],
+        modified: [],
+        deleted: []
+      })
+    })
+
+    test('v3 with database', () => {
+      expect(
+        diff(
+          'empty',
+          'users',
+          {
+            hasuraEndpoint: 'http://localhost:8080/'
+          },
+          'default'
+        )
+      ).toStrictEqual({
+        added: [
+          tableEntryChange({
+            database: 'default',
+            schema: 'public',
+            name: 'users',
+            _links: {
+              console: {
+                href: 'http://localhost:8080/console/data/default/schema/public/tables/users/modify'
+              }
+            }
+          })
+        ],
+        modified: [],
+        deleted: []
+      })
     })
   })
 })
@@ -72,6 +105,7 @@ describe('modified', () => {
           modified: [
             tableEntryChange(
               {
+                database: undefined,
                 schema: 'public',
                 name: 'users'
               },
@@ -108,6 +142,7 @@ describe('modified', () => {
           modified: [
             tableEntryChange(
               {
+                database: undefined,
                 schema: 'public',
                 name: 'users'
               },
@@ -162,6 +197,7 @@ describe('modified', () => {
           modified: [
             tableEntryChange(
               {
+                database: undefined,
                 schema: 'public',
                 name: 'users'
               },
@@ -194,6 +230,7 @@ describe('modified', () => {
           modified: [
             tableEntryChange(
               {
+                database: undefined,
                 schema: 'public',
                 name: 'users'
               },
@@ -221,6 +258,7 @@ test('modified and deleted with table index changes', () => {
     modified: [
       tableEntryChange(
         {
+          database: undefined,
           schema: 'public',
           name: 'users'
         },
@@ -235,6 +273,7 @@ test('modified and deleted with table index changes', () => {
     ],
     deleted: [
       tableEntryChange({
+        database: undefined,
         schema: 'public',
         name: 'todos'
       })
@@ -249,6 +288,7 @@ describe('deleted', () => {
       modified: [],
       deleted: [
         tableEntryChange({
+          database: undefined,
           schema: 'public',
           name: 'users'
         })
@@ -266,6 +306,7 @@ describe('deleted', () => {
       modified: [],
       deleted: [
         tableEntryChange({
+          database: undefined,
           schema: 'public',
           name: 'users'
         })
@@ -277,11 +318,22 @@ describe('deleted', () => {
 function diff(
   oldFixture: string,
   newFixture: string,
-  options?: DiffOptions
+  options?: DiffOptions,
+  database?: string
 ): TableEntryChanges {
+  const loadTableEntryFixture = (fixture: string): TableEntry[] => {
+    const tables = loadFixture<TableEntry[]>(`/${fixture}.yaml`)
+
+    if (database) {
+      return tables.map(table => qualifyTableEntry(table, database))
+    }
+
+    return tables
+  }
+
   return diffTableEntries(
-    loadFixture<TableEntry[]>(`/${oldFixture}.yaml`),
-    loadFixture<TableEntry[]>(`/${newFixture}.yaml`),
+    loadTableEntryFixture(oldFixture),
+    loadTableEntryFixture(newFixture),
     options
   )
 }

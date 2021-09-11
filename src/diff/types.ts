@@ -65,7 +65,10 @@ export interface TableEntryChange extends TablePermissionsChanges {
 
 export type TableEntryChanges = Record<ChangeType, TableEntryChange[]>
 
+export type VersionChange = 3 | undefined
+
 export interface Changes {
+  version: VersionChange
   tables: TableEntryChanges
 }
 /* #endregion */

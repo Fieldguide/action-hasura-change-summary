@@ -74,13 +74,21 @@ export function tablesFromMetadata(
   return metadata.databases.reduce<TableEntry[]>((tables, database) => {
     return [
       ...tables,
-      ...database.tables.map<TableEntry>(({table, ...tableEntry}) => ({
-        ...tableEntry,
-        table: {
-          ...table,
-          database: 2 === metadata.__converted_from ? undefined : database.name
-        }
-      }))
+      ...database.tables.map<TableEntry>(tableEntry => {
+        return 2 === metadata.__converted_from
+          ? tableEntry // omit database from config v2
+          : qualifyTableEntry(tableEntry, database.name)
+      })
     ]
   }, [])
+}
+
+export function qualifyTableEntry(
+  tableEntry: TableEntry,
+  database: string
+): TableEntry {
+  return {
+    ...tableEntry,
+    table: {...tableEntry.table, database}
+  }
 }

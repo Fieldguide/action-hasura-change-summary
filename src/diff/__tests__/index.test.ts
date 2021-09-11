@@ -6,6 +6,7 @@ describe('format', () => {
   describe('empty', () => {
     expect(
       format({
+        version: undefined,
         tables: {
           added: [],
           modified: [],
@@ -19,6 +20,7 @@ describe('format', () => {
     test('valid HTML', () => {
       expect(
         format({
+          version: 3,
           tables: {
             added: [
               tableEntryChange({

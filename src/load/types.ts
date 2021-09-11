@@ -11,8 +11,10 @@ export interface HasuraMetadataV3 extends Omit<HasuraMetadataV2, 'tables'> {
   databases: Database[]
 }
 
+export type ConvertedMetadataVersion = 2 | undefined
+
 export interface HasuraMetadataLatest extends HasuraMetadataV3 {
-  __converted_from?: 2
+  __converted_from?: ConvertedMetadataVersion
 }
 
 export type HasuraMetadata = HasuraMetadataV2 | HasuraMetadataV3

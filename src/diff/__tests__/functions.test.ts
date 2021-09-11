@@ -23,7 +23,6 @@ describe('tablesFromMetadata', () => {
     ).toStrictEqual([
       {
         table: {
-          database: undefined,
           schema: 'public',
           name: 'users'
         }

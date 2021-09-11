@@ -4,6 +4,7 @@ import {renderTemplate, tablesFromMetadata} from './functions'
 import {diffTableEntries, formatTableEntries} from './tables'
 import {CHANGE_TEMPLATE} from './templates'
 import {Changes, DiffOptions} from './types'
+import {diffVersion, formatVersion} from './version'
 
 export function diff(
   oldMetadata: HasuraMetadataLatest,
@@ -11,6 +12,12 @@ export function diff(
   options: DiffOptions = {}
 ): Changes {
   core.debug(`Diff options:\n${JSON.stringify(options, null, 2)}`)
+
+  core.info('Diffing version')
+  const version = diffVersion(
+    oldMetadata.__converted_from,
+    newMetadata.__converted_from
+  )
 
   core.startGroup('Diffing table metadata')
   const tables = diffTableEntries(
@@ -20,15 +27,16 @@ export function diff(
   )
   core.endGroup()
 
-  return {tables}
+  return {version, tables}
 }
 
 export function format(changes: Changes): string {
+  const version = formatVersion(changes.version)
   const tables = formatTableEntries(changes.tables)
 
-  if (!tables) {
+  if (!version && !tables) {
     return ''
   }
 
-  return renderTemplate(CHANGE_TEMPLATE, {tables})
+  return renderTemplate(CHANGE_TEMPLATE, {version, tables})
 }
