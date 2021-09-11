@@ -69,15 +69,16 @@ export function tab(message: string, level = 0): string {
 }
 
 export function tablesFromMetadata(
-  metadata: HasuraMetadataLatest
+  metadata: HasuraMetadataLatest,
+  qualifyTableEntries: boolean
 ): TableEntry[] {
   return metadata.databases.reduce<TableEntry[]>((tables, database) => {
     return [
       ...tables,
       ...database.tables.map<TableEntry>(tableEntry => {
-        return 2 === metadata.__converted_from
-          ? tableEntry // omit database from config v2
-          : qualifyTableEntry(tableEntry, database.name)
+        return qualifyTableEntries
+          ? qualifyTableEntry(tableEntry, database.name)
+          : tableEntry
       })
     ]
   }, [])

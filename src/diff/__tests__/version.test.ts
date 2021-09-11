@@ -28,8 +28,7 @@ describe('formatVersion', () => {
     href="https://hasura.io/docs/latest/graphql/core/migrations/upgrade-v3.html#what-has-changed"
     >what has changed</a
   >.
-</p>
-`
+</p>`
     )
   })
 })

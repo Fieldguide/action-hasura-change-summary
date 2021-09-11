@@ -13,16 +13,17 @@ export function diff(
 ): Changes {
   core.debug(`Diff options:\n${JSON.stringify(options, null, 2)}`)
 
-  core.info('Diffing version')
+  core.info('Diffing metadata version')
   const version = diffVersion(
     oldMetadata.__converted_from,
     newMetadata.__converted_from
   )
 
   core.startGroup('Diffing table metadata')
+  const qualifyTableEntries = 2 !== newMetadata.__converted_from
   const tables = diffTableEntries(
-    tablesFromMetadata(oldMetadata),
-    tablesFromMetadata(newMetadata),
+    tablesFromMetadata(oldMetadata, qualifyTableEntries),
+    tablesFromMetadata(newMetadata, qualifyTableEntries),
     options
   )
   core.endGroup()

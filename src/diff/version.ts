@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import {ConvertedMetadataVersion} from '../load/types'
 import {renderTemplate} from './functions'
 import {VERSION_TEMPLATE} from './templates'
@@ -17,5 +18,7 @@ export function formatVersion(version: VersionChange): string {
     return ''
   }
 
-  return renderTemplate(VERSION_TEMPLATE, {version})
+  core.info('Formatting version change')
+
+  return renderTemplate(VERSION_TEMPLATE, {version}).trim()
 }

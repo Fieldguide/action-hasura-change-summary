@@ -1,14 +1,30 @@
+import {isString} from 'lodash'
 import {TableEntry} from '@hasura/metadata'
 import {diffTableEntries} from '..'
 import {qualifyTableEntry} from '../../functions'
 import {DiffOptions, TableEntryChanges} from '../../types'
 import {loadFixture, tableEntryChange} from './utils'
 
-test('no change', () => {
-  expect(diff('empty', 'empty')).toStrictEqual({
-    added: [],
-    modified: [],
-    deleted: []
+describe('no change', () => {
+  test('v2', () => {
+    expect(diff('empty', 'empty')).toStrictEqual({
+      added: [],
+      modified: [],
+      deleted: []
+    })
+  })
+
+  test('v3', () => {
+    expect(
+      diff(
+        loadTableEntryFixture('users', 'default'),
+        loadTableEntryFixture('users', 'default')
+      )
+    ).toStrictEqual({
+      added: [],
+      modified: [],
+      deleted: []
+    })
   })
 })
 
@@ -63,12 +79,11 @@ describe('added', () => {
     test('v3 with database', () => {
       expect(
         diff(
-          'empty',
-          'users',
+          loadTableEntryFixture('empty', 'default'),
+          loadTableEntryFixture('users', 'default'),
           {
             hasuraEndpoint: 'http://localhost:8080/'
-          },
-          'default'
+          }
         )
       ).toStrictEqual({
         added: [
@@ -316,24 +331,29 @@ describe('deleted', () => {
 })
 
 function diff(
-  oldFixture: string,
-  newFixture: string,
-  options?: DiffOptions,
-  database?: string
+  oldFixture: string | TableEntry[],
+  newFixture: string | TableEntry[],
+  options?: DiffOptions
 ): TableEntryChanges {
-  const loadTableEntryFixture = (fixture: string): TableEntry[] => {
-    const tables = loadFixture<TableEntry[]>(`/${fixture}.yaml`)
+  const oldTableEntries = isString(oldFixture)
+    ? loadTableEntryFixture(oldFixture)
+    : oldFixture
+  const newTableEntries = isString(newFixture)
+    ? loadTableEntryFixture(newFixture)
+    : newFixture
 
-    if (database) {
-      return tables.map(table => qualifyTableEntry(table, database))
-    }
+  return diffTableEntries(oldTableEntries, newTableEntries, options)
+}
 
-    return tables
+function loadTableEntryFixture(
+  fixture: string,
+  database?: string
+): TableEntry[] {
+  const tables = loadFixture<TableEntry[]>(`/${fixture}.yaml`)
+
+  if (database) {
+    return tables.map(table => qualifyTableEntry(table, database))
   }
 
-  return diffTableEntries(
-    loadTableEntryFixture(oldFixture),
-    loadTableEntryFixture(newFixture),
-    options
-  )
+  return tables
 }
