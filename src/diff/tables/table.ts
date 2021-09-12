@@ -1,23 +1,31 @@
-import {QualifiedTable, TableEntry} from '@hasura/metadata'
+import {TableEntry} from '@hasura/metadata'
 import urlcat from 'urlcat'
+import {DEFAULT_DATABASE_NAME} from '../../load/consts'
 import {renderTemplate} from '../functions'
-import {DiffOptions, TableChange, TableEntryChange} from '../types'
+import {
+  DiffOptions,
+  QualifiedTable,
+  TableChange,
+  TableEntryChange
+} from '../types'
 import {viewFromTablePermissionChanges} from './permissions'
 import {PERMISSIONS_TEMPLATE, TABLE_TEMPLATE} from './templates'
 import {consoleLinkFromUrl} from './utils'
 
 export function changeFromQualifiedTable(
-  {schema, name}: QualifiedTable,
+  {database, schema, name}: QualifiedTable,
   {hasuraEndpoint}: DiffOptions
 ): TableChange {
-  const change: TableChange = {schema, name}
+  const change: TableChange = {database, schema, name}
 
   if (hasuraEndpoint) {
     change._links = consoleLinkFromUrl(
       urlcat(
         hasuraEndpoint,
-        '/console/data/schema/:schema/tables/:name/modify',
-        {schema, name}
+        `/console/data/${
+          database ? ':database/' : ''
+        }schema/:schema/tables/:name/modify`,
+        {database, schema, name}
       )
     )
   }
@@ -48,8 +56,12 @@ export function formatTableEntryChange(
   )
 }
 
-export function hashFromTable({schema, name}: QualifiedTable): string {
-  return `table:${schema}:${name}`
+export function hashFromTable({
+  database = DEFAULT_DATABASE_NAME,
+  schema,
+  name
+}: QualifiedTable): string {
+  return `table:${database}:${schema}:${name}`
 }
 
 export function tableEntryPredicate(

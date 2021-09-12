@@ -1,22 +1,30 @@
-import {isObject} from 'lodash'
-import {HasuraMetadataV2} from '@hasura/metadata'
 import {load} from 'js-yaml'
-import {join} from 'path'
-
-export function metadataPathFromProject(project: string): string {
-  return join(project, 'metadata')
-}
+import {isObject} from 'lodash'
+import {DEFAULT_DATABASE} from './consts'
+import {
+  HasuraMetadata,
+  HasuraMetadataLatest,
+  isMetadataV2,
+  isMetadataV3,
+  MetadataProperty
+} from './types'
 
 export function metadataFilenameFromProperty(
-  property: keyof HasuraMetadataV2
+  property: MetadataProperty
 ): string {
-  return `${property}.yaml`
+  const filename = `${property}.yaml`
+
+  if ('databases' === property) {
+    return `${property}/${filename}`
+  }
+
+  return filename
 }
 
 export function metadataFromVersionContents(
   fileContents: string
-): HasuraMetadataV2 {
-  const metadata = load(fileContents) as HasuraMetadataV2
+): HasuraMetadata {
+  const metadata = load(fileContents) as HasuraMetadata
 
   if (!isObject(metadata) || !isFinite(metadata.version)) {
     throw new Error('Invalid version metadata file')
@@ -25,13 +33,46 @@ export function metadataFromVersionContents(
   return metadataFromVersion(metadata.version)
 }
 
-export function metadataFromVersion(version: number): HasuraMetadataV2 {
-  if (2 !== version) {
-    throw new Error('Unsupported metadata version')
+export function metadataFromVersion(version: number): HasuraMetadata {
+  switch (version) {
+    case 2:
+      return {
+        version,
+        tables: []
+      }
+    case 3:
+      return {
+        version,
+        databases: []
+      }
+    default:
+      throw new Error('Unsupported metadata version')
+  }
+}
+
+export function convertMetadataToLatest(
+  metadata: HasuraMetadata
+): HasuraMetadataLatest {
+  if (isMetadataV2(metadata)) {
+    return {
+      __converted_from: 2,
+      version: 3,
+      databases: [
+        {
+          ...DEFAULT_DATABASE,
+          tables: metadata.tables
+        }
+      ]
+    }
   }
 
-  return {
-    version,
-    tables: []
+  if (isMetadataV3(metadata)) {
+    return metadata
   }
+
+  return assertNever(metadata)
+}
+
+function assertNever(metadata: never): never {
+  throw new Error(`Unexpected metadata: ${JSON.stringify(metadata)}`)
 }

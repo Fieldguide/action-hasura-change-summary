@@ -1,10 +1,21 @@
 import {
   DeletePermissionEntry,
   InsertPermissionEntry,
-  QualifiedTable,
+  QualifiedTable as QualifiedTableBase,
   SelectPermissionEntry,
+  TableEntry as TableEntryBase,
   UpdatePermissionEntry
 } from '@hasura/metadata'
+
+/* #region metadata */
+export interface QualifiedTable extends QualifiedTableBase {
+  database?: string
+}
+
+export interface TableEntry extends TableEntryBase {
+  table: QualifiedTable
+}
+/* #endregion */
 
 /* #region changes */
 export const ChangeTypes = ['added', 'modified', 'deleted'] as const
@@ -54,7 +65,10 @@ export interface TableEntryChange extends TablePermissionsChanges {
 
 export type TableEntryChanges = Record<ChangeType, TableEntryChange[]>
 
+export type VersionChange = 3 | undefined
+
 export interface Changes {
+  version: VersionChange
   tables: TableEntryChanges
 }
 /* #endregion */

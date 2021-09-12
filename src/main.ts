@@ -12,8 +12,8 @@ async function run(): Promise<void> {
     const oldMetadata = await new GitHubLoader(
       github.getOctokit(core.getInput('github_token')),
       github.context.repo,
-      process.env.GITHUB_BASE_REF || ''
-    ).load(projectDir)
+      process.env.GITHUB_BASE_REF ?? ''
+    ).load(projectDir, true)
     core.endGroup()
 
     core.startGroup(`Loading new metadata in: ${projectDir}`)

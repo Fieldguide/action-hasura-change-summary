@@ -24,6 +24,9 @@ jobs:
           commit_message: Build project
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: ['v2', 'v3']
     steps:
       - uses: actions/checkout@v2
       - id: nvm
@@ -34,4 +37,4 @@ jobs:
       - uses: ./
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          project_dir: '__tests__/fixtures'
+          project_dir: '__tests__/fixtures/${{ matrix.config }}'

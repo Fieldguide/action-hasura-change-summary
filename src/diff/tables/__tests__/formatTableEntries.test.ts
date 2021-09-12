@@ -114,6 +114,7 @@ test('deleted', () => {
       modified: [],
       deleted: [
         tableEntryChange({
+          database: 'default',
           schema: 'public',
           name: 'users'
         })
@@ -123,7 +124,7 @@ test('deleted', () => {
 <ul>
   <li>
     <p>
-      <code>public.users</code>
+      <code>default.public.users</code>
     </p>
   </li>
 </ul>`)
