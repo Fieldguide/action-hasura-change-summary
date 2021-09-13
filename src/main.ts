@@ -28,8 +28,11 @@ async function run(): Promise<void> {
 
     core.setOutput('change_html', format(changes))
   } catch (error) {
-    core.setFailed(error.message)
-    core.debug(error.stack)
+    core.setFailed(error instanceof Error ? error.message : String(error))
+
+    if (error instanceof Error && error.stack) {
+      core.debug(error.stack)
+    }
   }
 }
 
