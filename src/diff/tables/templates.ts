@@ -1,4 +1,4 @@
-export const TABLE_TEMPLATE = `<h3>{{heading}}</h3>
+export const TABLE_TEMPLATE = `<h3>{{heading}} ({{tables.length}})</h3>
 <ul>
   {{#tables}}
   <li>
