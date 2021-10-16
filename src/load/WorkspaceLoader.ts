@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 
-import {AbstractMetadataLoader} from './abstract-metadata-loader'
+import {AbstractMetadataLoader} from './AbstractMetadataLoader'
 import {join} from 'path'
 import {readFileSync} from 'fs'
 

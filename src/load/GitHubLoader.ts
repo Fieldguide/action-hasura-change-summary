@@ -3,7 +3,7 @@ import * as core from '@actions/core'
 import {TreeEntryBlob, isTreeEntryBlob} from './types'
 import {basename, dirname} from 'path'
 
-import {AbstractMetadataLoader} from './abstract-metadata-loader'
+import {AbstractMetadataLoader} from './AbstractMetadataLoader'
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
 import {METADATA_CONTENTS_GRAPHQL_QUERY} from './consts'

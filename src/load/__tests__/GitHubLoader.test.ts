@@ -1,9 +1,10 @@
+import {HasuraMetadata, TreeEntry} from '../types'
+import {lstatSync, readFileSync, readdirSync} from 'fs'
+
+import {GitHubLoader} from '../GitHubLoader'
 import {RequestParameters} from '@octokit/types'
-import {lstatSync, readdirSync, readFileSync} from 'fs'
 import {isString} from 'lodash'
 import {join} from 'path'
-import {GitHubLoader} from '../GitHubLoader'
-import {HasuraMetadata, TreeEntry} from '../types'
 
 describe('GitHubLoader', () => {
   let target: GitHubLoader
