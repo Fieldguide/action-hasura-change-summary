@@ -21,7 +21,7 @@ test('added', () => {
       deleted: []
     })
   ).toStrictEqual(
-    `<h3>Tracked Tables</h3>
+    `<h3>Tracked Tables (2)</h3>
 <ul>
   <li>
     <p>
@@ -67,7 +67,7 @@ test('added and modified', () => {
       deleted: []
     })
   ).toStrictEqual(
-    `<h3>Tracked Tables</h3>
+    `<h3>Tracked Tables (1)</h3>
 <ul>
   <li>
     <p>
@@ -75,7 +75,7 @@ test('added and modified', () => {
     </p>
   </li>
 </ul>
-<h3>Updated Tables</h3>
+<h3>Updated Tables (1)</h3>
 <ul>
   <li>
     <p>
@@ -120,7 +120,7 @@ test('deleted', () => {
         })
       ]
     })
-  ).toStrictEqual(`<h3>Untracked Tables</h3>
+  ).toStrictEqual(`<h3>Untracked Tables (1)</h3>
 <ul>
   <li>
     <p>
