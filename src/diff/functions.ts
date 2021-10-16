@@ -1,8 +1,5 @@
-import {DeletePermissionEntry} from '@hasura/metadata'
-import {isArray, isObject, isString} from 'lodash'
 import * as Mustache from 'mustache'
-import prettier from 'prettier'
-import {HasuraMetadataLatest} from '../load/types'
+
 import {
   ChangeType,
   DeltaAddition,
@@ -11,6 +8,11 @@ import {
   PermissionEntry,
   TableEntry
 } from './types'
+import {isArray, isObject, isString} from 'lodash'
+
+import {DeletePermissionEntry} from '@hasura/metadata'
+import {HasuraMetadataLatest} from '../load/types'
+import prettier from 'prettier'
 
 export function isTableEntry(object: any): object is TableEntry {
   return (

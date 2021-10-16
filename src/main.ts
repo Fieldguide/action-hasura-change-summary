@@ -1,8 +1,10 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+
 import {diff, format} from './diff'
-import {GitHubLoader} from './load/GitHubLoader'
-import {WorkspaceLoader} from './load/WorkspaceLoader'
+
+import {GitHubLoader} from './load/github-loader'
+import {WorkspaceLoader} from './load/workspace-loader'
 
 async function run(): Promise<void> {
   try {

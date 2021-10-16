@@ -1,8 +1,9 @@
 import * as core from '@actions/core'
+
 import {ConvertedMetadataVersion} from '../load/types'
-import {renderTemplate} from './functions'
 import {VERSION_TEMPLATE} from './templates'
 import {VersionChange} from './types'
+import {renderTemplate} from './functions'
 
 export function diffVersion(
   oldConvertedFrom: ConvertedMetadataVersion,

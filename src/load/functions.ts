@@ -1,13 +1,14 @@
-import {load} from 'js-yaml'
-import {isObject} from 'lodash'
-import {DEFAULT_DATABASE} from './consts'
 import {
   HasuraMetadata,
   HasuraMetadataLatest,
+  MetadataProperty,
   isMetadataV2,
-  isMetadataV3,
-  MetadataProperty
+  isMetadataV3
 } from './types'
+
+import {DEFAULT_DATABASE} from './consts'
+import {isObject} from 'lodash'
+import {load} from 'js-yaml'
 
 export function metadataFilenameFromProperty(
   property: MetadataProperty

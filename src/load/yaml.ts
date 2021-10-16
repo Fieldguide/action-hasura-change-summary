@@ -1,7 +1,8 @@
-import yaml from 'js-yaml'
-import {isArray, isObject, isString} from 'lodash'
 import {dirname, join} from 'path'
+import {isArray, isObject, isString} from 'lodash'
+
 import {FileReader} from './types'
+import yaml from 'js-yaml'
 
 const INCLUDE_PREFIX = '!include '
 

@@ -1,5 +1,5 @@
-import {isObject, isString} from 'lodash'
 import {HasuraMetadataV2, TableEntry} from '@hasura/metadata'
+import {isObject, isString} from 'lodash'
 
 export interface Database {
   name: string

@@ -1,17 +1,19 @@
 import * as core from '@actions/core'
-import {join} from 'path'
-import {
-  convertMetadataToLatest,
-  metadataFilenameFromProperty,
-  metadataFromVersion,
-  metadataFromVersionContents
-} from './functions'
+
 import {
   HasuraMetadata,
   HasuraMetadataLatest,
   MetadataLoader,
   MetadataProperty
 } from './types'
+import {
+  convertMetadataToLatest,
+  metadataFilenameFromProperty,
+  metadataFromVersion,
+  metadataFromVersionContents
+} from './functions'
+
+import {join} from 'path'
 import {load} from './yaml'
 
 export abstract class AbstractMetadataLoader implements MetadataLoader {
