@@ -3,7 +3,7 @@ import * as github from '@actions/github'
 
 import {diff, format} from './diff'
 
-import {GitHubLoader} from './load/GithubLoader'
+import {GitHubLoader} from './load/GitHubLoader'
 import {WorkspaceLoader} from './load/WorkspaceLoader'
 
 async function run(): Promise<void> {
