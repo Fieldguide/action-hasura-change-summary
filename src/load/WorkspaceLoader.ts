@@ -1,7 +1,8 @@
 import * as core from '@actions/core'
-import {readFileSync} from 'fs'
-import {join} from 'path'
+
 import {AbstractMetadataLoader} from './AbstractMetadataLoader'
+import {join} from 'path'
+import {readFileSync} from 'fs'
 
 export class WorkspaceLoader extends AbstractMetadataLoader {
   constructor(private workspacePath: string) {

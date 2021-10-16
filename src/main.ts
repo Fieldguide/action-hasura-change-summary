@@ -1,6 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+
 import {diff, format} from './diff'
+
 import {GitHubLoader} from './load/GitHubLoader'
 import {WorkspaceLoader} from './load/WorkspaceLoader'
 
