@@ -1,10 +1,12 @@
 import * as core from '@actions/core'
-import {HasuraMetadataLatest} from './../load/types'
-import {renderTemplate, tablesFromMetadata} from './functions'
-import {diffTableEntries, formatTableEntries} from './tables'
-import {CHANGE_TEMPLATE} from './templates'
+
 import {Changes, DiffOptions} from './types'
+import {diffTableEntries, formatTableEntries} from './tables'
 import {diffVersion, formatVersion} from './version'
+import {renderTemplate, tablesFromMetadata} from './functions'
+
+import {CHANGE_TEMPLATE} from './templates'
+import {HasuraMetadataLatest} from './../load/types'
 
 export function diff(
   oldMetadata: HasuraMetadataLatest,

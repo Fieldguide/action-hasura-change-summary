@@ -8,6 +8,8 @@
     "project": "./tsconfig.eslint.json"
   },
   "rules": {
+    "filenames/match-regex": "off",
+    "i18n-text/no-en": "off",
     "eslint-comments/no-use": "off",
     "import/no-namespace": "off",
     "no-unused-vars": "off",

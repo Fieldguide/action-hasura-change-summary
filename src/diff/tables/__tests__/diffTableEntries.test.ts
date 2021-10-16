@@ -1,9 +1,10 @@
-import {isString} from 'lodash'
-import {TableEntry} from '@hasura/metadata'
-import {diffTableEntries} from '..'
-import {qualifyTableEntry} from '../../functions'
 import {DiffOptions, TableEntryChanges} from '../../types'
 import {loadFixture, tableEntryChange} from './utils'
+
+import {TableEntry} from '@hasura/metadata'
+import {diffTableEntries} from '..'
+import {isString} from 'lodash'
+import {qualifyTableEntry} from '../../functions'
 
 describe('no change', () => {
   test('v2', () => {
