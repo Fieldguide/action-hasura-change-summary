@@ -41,7 +41,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/js-yaml": "^4.0.3",
-    "@types/lodash": "^4.14.175",
+    "@types/lodash": "^4.14.177",
     "@types/mustache": "^4.1.2",
     "@types/node": "^12.20.33",
     "@typescript-eslint/parser": "^4.33.0",
