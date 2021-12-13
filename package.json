@@ -39,7 +39,7 @@
     "urlcat": "^2.0.4"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23",
+    "@types/jest": "^27.0.3",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.178",
     "@types/mustache": "^4.1.2",
@@ -50,9 +50,9 @@
     "eslint-plugin-github": "^4.3.2",
     "eslint-plugin-jest": "^25.3.0",
     "html-validate": "^6.1.4",
-    "jest": "^26.6.3",
+    "jest": "^27.4.4",
     "jest-circus": "^27.4.4",
-    "ts-jest": "^26.5.6",
+    "ts-jest": "^27.1.1",
     "typescript": "^4.5.3"
   }
 }
