@@ -49,7 +49,7 @@
     "@vercel/ncc": "^0.33.0",
     "eslint": "^7.32.0",
     "eslint-plugin-github": "^4.3.2",
-    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-jest": "^26.2.1",
     "html-validate": "^7.0.0",
     "jest": "^28.1.0",
     "ts-jest": "^28.0.2",
