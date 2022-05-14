@@ -49,7 +49,11 @@ describe('format', () => {
             deleted: []
           }
         })
-      ).toHTMLValidate()
+      ).toHTMLValidate({
+        rules: {
+          'no-deprecated-attr': 'off'
+        }
+      })
     })
   })
 })

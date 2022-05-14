@@ -85,16 +85,16 @@ test('added and modified', () => {
     <table>
       <thead>
         <tr>
-          <th></th>
-          <th>insert</th>
-          <th>select</th>
-          <th>update</th>
-          <th>delete</th>
+          <th scope="col"></th>
+          <th scope="col">insert</th>
+          <th scope="col">select</th>
+          <th scope="col">update</th>
+          <th scope="col">delete</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th>user</th>
+          <th scope="row">user</th>
           <td align="center"></td>
           <td align="center">➕</td>
           <td align="center"></td>

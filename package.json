@@ -7,11 +7,12 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write .",
-    "format-check": "prettier --check .",
+    "format:check": "prettier --check .",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
-    "test": "jest",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+    "test": "jest --watch",
+    "test:ci": "jest",
+    "all": "npm run build && npm run format:check && npm run lint && npm run package && npm run test:ci"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "urlcat": "^2.0.4"
   },
   "devDependencies": {
+    "@types/jest": "^27.5.1",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.178",
     "@types/mustache": "^4.1.2",
@@ -48,9 +50,9 @@
     "eslint": "^7.32.0",
     "eslint-plugin-github": "^4.3.2",
     "eslint-plugin-jest": "^25.3.0",
-    "html-validate": "^6.1.4",
-    "jest": "^27.4.4",
-    "ts-jest": "^27.1.1",
+    "html-validate": "^7.0.0",
+    "jest": "^28.1.0",
+    "ts-jest": "^28.0.2",
     "typescript": "^4.5.3"
   }
 }
