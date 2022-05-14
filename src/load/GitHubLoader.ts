@@ -40,7 +40,7 @@ export class GitHubLoader extends AbstractMetadataLoader {
       const objectExpression = `${this.baseRef}:${directory}`
 
       core.debug(`Fetching directory contents: ${objectExpression}`)
-      const {repository} = await this.octokit.graphql<any>(
+      const {repository} = await this.octokit.graphql(
         METADATA_CONTENTS_GRAPHQL_QUERY,
         {
           ...this.repo,

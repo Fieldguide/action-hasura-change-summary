@@ -8,42 +8,43 @@ import {
   PermissionEntry,
   TableEntry
 } from './types'
+import {DeletePermissionEntry, InsertPermission} from '@hasura/metadata'
 import {isArray, isObject, isString} from 'lodash'
 
-import {DeletePermissionEntry} from '@hasura/metadata'
 import {HasuraMetadataLatest} from '../load/types'
 import prettier from 'prettier'
 
-export function isTableEntry(object: any): object is TableEntry {
+export function isTableEntry(object: unknown): object is TableEntry {
   return (
-    isObject(object.table) &&
-    isString(object.table.schema) &&
-    isString(object.table.name)
+    isObject(object) &&
+    isObject((object as TableEntry).table) &&
+    isString((object as TableEntry).table.schema) &&
+    isString((object as TableEntry).table.name)
   )
 }
 
-export function isPermissionEntry(object: any): object is PermissionEntry {
-  return isString(object.role)
+export function isPermissionEntry(object: unknown): object is PermissionEntry {
+  return isObject(object) && isString((object as PermissionEntry).role)
 }
 
 export function isDeletePermissionEntry(
   object: PermissionEntry
 ): object is DeletePermissionEntry {
-  return !(object.permission as any).columns
+  return !(object.permission as InsertPermission).columns
 }
 
-export function isAddition<T>(delta: any): delta is DeltaAddition<T> {
+export function isAddition<T>(delta: unknown): delta is DeltaAddition<T> {
   return isArray(delta) && 1 === delta.length
 }
 
-export function isDeletion<T>(delta: any): delta is DeltaDeletion<T> {
+export function isDeletion<T>(delta: unknown): delta is DeltaDeletion<T> {
   return (
     isArray(delta) && 3 === delta.length && 0 === delta[1] && 0 === delta[2]
   )
 }
 
 export function isConventionalModification<T>(
-  delta: any
+  delta: unknown
 ): delta is DeltaModificationConventional<T> {
   return isArray(delta) && 2 === delta.length
 }
@@ -58,7 +59,7 @@ export function emptyChanges<T>(): Record<ChangeType, T[]> {
 
 export function renderTemplate(
   template: string,
-  view: any,
+  view: Record<string, unknown>,
   partials: Record<string, string> = {}
 ): string {
   return prettier.format(Mustache.render(template, view, partials), {

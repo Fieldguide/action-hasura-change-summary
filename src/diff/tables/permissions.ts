@@ -1,14 +1,6 @@
 import * as core from '@actions/core'
 import * as jsondiffpatch from 'jsondiffpatch'
-import {forEach, isArray} from 'lodash'
-import {
-  emptyChanges,
-  isAddition,
-  isDeletePermissionEntry,
-  isDeletion,
-  isPermissionEntry,
-  tab
-} from '../functions'
+
 import {
   ChangeType,
   ChangeTypes,
@@ -19,12 +11,22 @@ import {
   TablePermissionChanges,
   TablePermissions,
   TablePermissionsChanges
-} from './../types'
+} from '../types'
+import {
+  emptyChanges,
+  isAddition,
+  isDeletePermissionEntry,
+  isDeletion,
+  isPermissionEntry,
+  tab
+} from '../functions'
+import {forEach, isArray} from 'lodash'
+
 import {PermissionsChangeType} from './types'
 import {iconFromChangeType} from './utils'
 
 const diffPatcher = jsondiffpatch.create({
-  objectHash(object: any, index: number) {
+  objectHash(object: unknown, index: number) {
     if (isPermissionEntry(object)) {
       return `permission:${object.role}`
     }
@@ -63,7 +65,7 @@ export function diffPermissions(
   )
   const changes = emptyChanges<TablePermissionChange>()
 
-  forEach(permissionsDelta, (delta: any, index: string) => {
+  forEach(permissionsDelta, (delta: unknown, index: string) => {
     const permissionIndex = Number(index)
 
     if (isAddition<PermissionEntry>(delta)) {
@@ -128,7 +130,7 @@ export function normalizePermissionEntry(
 
 export function viewFromTablePermissionChanges(
   tablePermissions: TablePermissionsChanges
-): any {
+): null | Record<string, unknown> {
   const rolePermissionChangesMap = TablePermissions.reduce<
     Record<string, Partial<PermissionsChangeType>>
   >((map, permission) => {

@@ -1,16 +1,17 @@
-import {TableEntry} from '@hasura/metadata'
-import urlcat from 'urlcat'
-import {DEFAULT_DATABASE_NAME} from '../../load/consts'
-import {renderTemplate} from '../functions'
 import {
   DiffOptions,
   QualifiedTable,
   TableChange,
   TableEntryChange
 } from '../types'
-import {viewFromTablePermissionChanges} from './permissions'
 import {PERMISSIONS_TEMPLATE, TABLE_TEMPLATE} from './templates'
+
+import {DEFAULT_DATABASE_NAME} from '../../load/consts'
+import {TableEntry} from '@hasura/metadata'
 import {consoleLinkFromUrl} from './utils'
+import {renderTemplate} from '../functions'
+import urlcat from 'urlcat'
+import {viewFromTablePermissionChanges} from './permissions'
 
 export function changeFromQualifiedTable(
   {database, schema, name}: QualifiedTable,

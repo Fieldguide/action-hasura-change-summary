@@ -1,23 +1,25 @@
 import * as core from '@actions/core'
 import * as jsondiffpatch from 'jsondiffpatch'
-import {forEach} from 'lodash'
-import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
+
 import {
   DiffOptions,
   TableEntry,
   TableEntryChange,
   TableEntryChanges
 } from '../types'
-import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
 import {
   changeFromQualifiedTable,
   formatTableEntryChange,
   hashFromTable,
   tableEntryPredicate
 } from './table'
+import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
+import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
+
+import {forEach} from 'lodash'
 
 const diffPatcher = jsondiffpatch.create({
-  objectHash(object: any, index: number) {
+  objectHash(object: unknown, index: number) {
     if (isTableEntry(object)) {
       return hashFromTable(object.table)
     }
@@ -38,7 +40,7 @@ export function diffTableEntries(
     return changes
   }
 
-  forEach(tablesDelta, (delta: any, index: string) => {
+  forEach(tablesDelta, (delta: unknown, index: string) => {
     const tableIndex = Number(index)
 
     if (isAddition<TableEntry>(delta)) {
