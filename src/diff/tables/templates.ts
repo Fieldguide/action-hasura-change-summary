@@ -20,14 +20,14 @@ export const PERMISSIONS_TEMPLATE = `<table>
 <thead>
   <tr>
     {{#headRow}}
-    <th>{{.}}</th>
+    <th scope="col">{{.}}</th>
     {{/headRow}}
   </tr>
 </thead>
 <tbody>
   {{#body}}
     <tr>
-      <th>{{role}}</th>
+      <th scope="row">{{role}}</th>
       {{#cells}}
         <td align="center">{{.}}</td>
       {{/cells}}
