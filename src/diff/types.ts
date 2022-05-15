@@ -1,4 +1,5 @@
 import {
+  Columns,
   DeletePermissionEntry,
   InsertPermissionEntry,
   QualifiedTable as QualifiedTableBase,
@@ -46,8 +47,17 @@ export const TablePermissions = [
 
 export type TablePermission = typeof TablePermissions[number]
 
+export type TablePermissionColumn = string[] | Columns
+
+export interface TablePermissionColumnsChanges {
+  added: string[]
+  modified: boolean
+  deleted: string[]
+}
+
 export interface TablePermissionChange {
   role: string
+  columns: TablePermissionColumnsChanges
 }
 
 export type TablePermissionChanges = Record<ChangeType, TablePermissionChange[]>

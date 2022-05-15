@@ -57,8 +57,39 @@ test('added and modified', () => {
           },
           {
             select_permissions: {
-              added: [{role: 'user'}],
+              added: [
+                {
+                  role: 'user',
+                  columns: {
+                    added: ['created_at', 'name'],
+                    modified: true,
+                    deleted: []
+                  }
+                },
+                {
+                  role: 'manager',
+                  columns: {
+                    added: ['created_at', 'name'],
+                    modified: true,
+                    deleted: []
+                  }
+                }
+              ],
               modified: [],
+              deleted: []
+            },
+            update_permissions: {
+              added: [],
+              modified: [
+                {
+                  role: 'user',
+                  columns: {
+                    added: ['name'],
+                    modified: true,
+                    deleted: ['created_at', 'id']
+                  }
+                }
+              ],
               deleted: []
             }
           }
@@ -94,14 +125,47 @@ test('added and modified', () => {
       </thead>
       <tbody>
         <tr>
-          <th scope="row">user</th>
+          <th scope="row">manager</th>
           <td align="center"></td>
           <td align="center">➕</td>
           <td align="center"></td>
           <td align="center"></td>
         </tr>
+        <tr>
+          <th scope="row">user</th>
+          <td align="center"></td>
+          <td align="center">➕</td>
+          <td align="center"><sup>➕</sup>/<sub>➖</sub></td>
+          <td align="center"></td>
+        </tr>
       </tbody>
     </table>
+    <details>
+      <summary>7 updated column permissions</summary>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">insert</th>
+            <th scope="col">select</th>
+            <th scope="col">update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">manager</th>
+            <td></td>
+            <td rowspan="0">➕ created_at<br />➕ name</td>
+            <td></td>
+          </tr>
+          <tr>
+            <th scope="row">user</th>
+            <td></td>
+            <td>➖ <del>created_at</del><br />➖ <del>id</del><br />➕ name</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
   </li>
 </ul>`
   )

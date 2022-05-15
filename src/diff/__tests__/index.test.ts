@@ -1,4 +1,5 @@
 import 'html-validate/jest'
+
 import {format} from '..'
 import {tableEntryChange} from '../tables/__tests__/utils'
 
@@ -39,7 +40,16 @@ describe('format', () => {
                 },
                 {
                   select_permissions: {
-                    added: [{role: 'user'}],
+                    added: [
+                      {
+                        role: 'user',
+                        columns: {
+                          added: [],
+                          modified: false,
+                          deleted: []
+                        }
+                      }
+                    ],
                     modified: [],
                     deleted: []
                   }

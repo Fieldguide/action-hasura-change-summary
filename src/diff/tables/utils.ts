@@ -11,14 +11,14 @@ export function iconFromChangeType(changeType: ChangeType): string {
     case 'added':
       return '➕'
     case 'modified':
-      return '➕/➖'
+      return '<sup>➕</sup>/<sub>➖</sub>'
     case 'deleted':
       return '➖'
     default:
-      assertNever(changeType)
+      assertNeverChangeType(changeType)
   }
 }
 
-function assertNever(changeType: never): never {
+export function assertNeverChangeType(changeType: never): never {
   throw new Error(`Unexpected change type: ${changeType}`)
 }
