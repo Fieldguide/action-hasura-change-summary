@@ -1,4 +1,8 @@
-import {DiffOptions, TableEntryChanges} from '../../types'
+import {
+  DiffOptions,
+  TableEntryChanges,
+  TablePermissionColumnChanges
+} from '../../types'
 import {loadFixture, tableEntryChange} from './utils'
 
 import {TableEntry} from '@hasura/metadata'
@@ -8,7 +12,7 @@ import {qualifyTableEntry} from '../../functions'
 
 describe('no change', () => {
   test('v2', () => {
-    expect(diff('empty', 'empty')).toStrictEqual({
+    expect(diff('empty', 'empty')).toStrictEqual<TableEntryChanges>({
       added: [],
       modified: [],
       deleted: []
@@ -21,7 +25,7 @@ describe('no change', () => {
         loadTableEntryFixture('users', 'default'),
         loadTableEntryFixture('users', 'default')
       )
-    ).toStrictEqual({
+    ).toStrictEqual<TableEntryChanges>({
       added: [],
       modified: [],
       deleted: []
@@ -31,22 +35,47 @@ describe('no change', () => {
 
 describe('added', () => {
   test('no endpoint', () => {
-    expect(diff('empty', 'users_permissions/user_select_full')).toStrictEqual({
+    expect(
+      diff('empty', 'users_permissions/user_select_full')
+    ).toStrictEqual<TableEntryChanges>({
       added: [
-        tableEntryChange(
-          {
+        {
+          table: {
             database: undefined,
             schema: 'public',
             name: 'users'
           },
-          {
-            select_permissions: {
-              added: [{role: 'user'}],
-              modified: [],
-              deleted: []
-            }
+          insert_permissions: {
+            added: [],
+            modified: [],
+            deleted: []
+          },
+          select_permissions: {
+            added: [
+              {
+                role: 'user',
+                columns: [
+                  {name: 'created_at', isComputed: false, type: 'added'},
+                  {name: 'id', isComputed: false, type: 'added'},
+                  {name: 'last_login_at', isComputed: false, type: 'added'},
+                  {name: 'name', isComputed: false, type: 'added'}
+                ]
+              }
+            ],
+            modified: [],
+            deleted: []
+          },
+          update_permissions: {
+            added: [],
+            modified: [],
+            deleted: []
+          },
+          delete_permissions: {
+            added: [],
+            modified: [],
+            deleted: []
           }
-        )
+        }
       ],
       modified: [],
       deleted: []
@@ -59,7 +88,7 @@ describe('added', () => {
         diff('empty', 'users', {
           hasuraEndpoint: 'http://localhost:8080/'
         })
-      ).toStrictEqual({
+      ).toStrictEqual<TableEntryChanges>({
         added: [
           tableEntryChange({
             database: undefined,
@@ -86,7 +115,7 @@ describe('added', () => {
             hasuraEndpoint: 'http://localhost:8080/'
           }
         )
-      ).toStrictEqual({
+      ).toStrictEqual<TableEntryChanges>({
         added: [
           tableEntryChange({
             database: 'default',
@@ -116,7 +145,7 @@ describe('modified', () => {
       ]
     ]) {
       test(`${oldFixture} -> ${newFixture}`, () => {
-        expect(diff(oldFixture, newFixture)).toStrictEqual({
+        expect(diff(oldFixture, newFixture)).toStrictEqual<TableEntryChanges>({
           added: [],
           modified: [
             tableEntryChange(
@@ -127,7 +156,21 @@ describe('modified', () => {
               },
               {
                 select_permissions: {
-                  added: [{role: 'user'}],
+                  added: [
+                    {
+                      role: 'user',
+                      columns: [
+                        {name: 'created_at', isComputed: false, type: 'added'},
+                        {name: 'id', isComputed: false, type: 'added'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'added'
+                        },
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
+                    }
+                  ],
                   modified: [],
                   deleted: []
                 }
@@ -153,7 +196,7 @@ describe('modified', () => {
       ]
     ]) {
       test(`${oldFixture} -> ${newFixture}`, () => {
-        expect(diff(oldFixture, newFixture)).toStrictEqual({
+        expect(diff(oldFixture, newFixture)).toStrictEqual<TableEntryChanges>({
           added: [],
           modified: [
             tableEntryChange(
@@ -164,22 +207,55 @@ describe('modified', () => {
               },
               {
                 insert_permissions: {
-                  added: [{role: 'manager'}],
+                  added: [
+                    {
+                      role: 'manager',
+                      columns: [
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
+                    }
+                  ],
                   modified: [],
                   deleted: []
                 },
                 select_permissions: {
-                  added: [{role: 'manager'}],
+                  added: [
+                    {
+                      role: 'manager',
+                      columns: [
+                        {name: 'created_at', isComputed: false, type: 'added'},
+                        {name: 'id', isComputed: false, type: 'added'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'added'
+                        },
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
+                    }
+                  ],
                   modified: [],
                   deleted: []
                 },
                 update_permissions: {
-                  added: [{role: 'manager'}],
+                  added: [
+                    {
+                      role: 'manager',
+                      columns: [
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
+                    }
+                  ],
                   modified: [],
                   deleted: []
                 },
                 delete_permissions: {
-                  added: [{role: 'manager'}],
+                  added: [
+                    {
+                      role: 'manager',
+                      columns: []
+                    }
+                  ],
                   modified: [],
                   deleted: []
                 }
@@ -208,7 +284,7 @@ describe('modified', () => {
       ]
     ]) {
       test(`${oldFixture} -> ${newFixture}`, () => {
-        expect(diff(oldFixture, newFixture)).toStrictEqual({
+        expect(diff(oldFixture, newFixture)).toStrictEqual<TableEntryChanges>({
           added: [],
           modified: [
             tableEntryChange(
@@ -220,7 +296,92 @@ describe('modified', () => {
               {
                 select_permissions: {
                   added: [],
-                  modified: [{role: 'user'}],
+                  modified: [
+                    {
+                      role: 'user',
+                      columns: []
+                    }
+                  ],
+                  deleted: []
+                }
+              }
+            )
+          ],
+          deleted: []
+        })
+      })
+    }
+  })
+
+  describe('update user column select permissions', () => {
+    const tests: [string, string, TablePermissionColumnChanges][] = [
+      [
+        'users_permissions/user_select_full_id_column',
+        'users_permissions/user_select_full',
+        [
+          {name: 'created_at', isComputed: false, type: 'added'},
+          {name: 'last_login_at', isComputed: false, type: 'added'},
+          {name: 'name', isComputed: false, type: 'added'}
+        ]
+      ],
+      [
+        'users_permissions/user_select_full',
+        'users_permissions/user_select_full_id_column',
+        [
+          {name: 'created_at', isComputed: false, type: 'deleted'},
+          {name: 'last_login_at', isComputed: false, type: 'deleted'},
+          {name: 'name', isComputed: false, type: 'deleted'}
+        ]
+      ],
+      [
+        'users_permissions/user_select_full_all_columns',
+        'users_permissions/user_select_full_id_column',
+        true
+      ],
+      [
+        'users_permissions/user_select_full_id_column',
+        'users_permissions/user_select_full_computed_fields',
+        [
+          {
+            name: 'full_name',
+            isComputed: true,
+            type: 'added'
+          }
+        ]
+      ],
+      [
+        'users_permissions/user_select_full_computed_fields',
+        'users_permissions/user_select_full_id_column',
+        [
+          {
+            name: 'full_name',
+            isComputed: true,
+            type: 'deleted'
+          }
+        ]
+      ]
+    ]
+
+    for (const [oldFixture, newFixture, columns] of tests) {
+      test(`${oldFixture} -> ${newFixture}`, () => {
+        expect(diff(oldFixture, newFixture)).toStrictEqual<TableEntryChanges>({
+          added: [],
+          modified: [
+            tableEntryChange(
+              {
+                database: undefined,
+                schema: 'public',
+                name: 'users'
+              },
+              {
+                select_permissions: {
+                  added: [],
+                  modified: [
+                    {
+                      role: 'user',
+                      columns
+                    }
+                  ],
                   deleted: []
                 }
               }
@@ -241,7 +402,7 @@ describe('modified', () => {
       ]
     ]) {
       test(`${oldFixture} -> ${newFixture}`, () => {
-        expect(diff(oldFixture, newFixture)).toStrictEqual({
+        expect(diff(oldFixture, newFixture)).toStrictEqual<TableEntryChanges>({
           added: [],
           modified: [
             tableEntryChange(
@@ -254,7 +415,25 @@ describe('modified', () => {
                 select_permissions: {
                   added: [],
                   modified: [],
-                  deleted: [{role: 'user'}]
+                  deleted: [
+                    {
+                      role: 'user',
+                      columns: [
+                        {
+                          name: 'created_at',
+                          isComputed: false,
+                          type: 'deleted'
+                        },
+                        {name: 'id', isComputed: false, type: 'deleted'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'deleted'
+                        },
+                        {name: 'name', isComputed: false, type: 'deleted'}
+                      ]
+                    }
+                  ]
                 }
               }
             )
@@ -269,7 +448,7 @@ describe('modified', () => {
 test('modified and deleted with table index changes', () => {
   expect(
     diff('todos_and_users', 'users_permissions/user_select_filtered')
-  ).toStrictEqual({
+  ).toStrictEqual<TableEntryChanges>({
     added: [],
     modified: [
       tableEntryChange(
@@ -281,7 +460,12 @@ test('modified and deleted with table index changes', () => {
         {
           select_permissions: {
             added: [],
-            modified: [{role: 'user'}],
+            modified: [
+              {
+                role: 'user',
+                columns: []
+              }
+            ],
             deleted: []
           }
         }
@@ -299,7 +483,7 @@ test('modified and deleted with table index changes', () => {
 
 describe('deleted', () => {
   test('no endpoint', () => {
-    expect(diff('users', 'empty')).toStrictEqual({
+    expect(diff('users', 'empty')).toStrictEqual<TableEntryChanges>({
       added: [],
       modified: [],
       deleted: [
@@ -317,7 +501,7 @@ describe('deleted', () => {
       diff('users', 'empty', {
         hasuraEndpoint: 'http://localhost:8080/'
       })
-    ).toStrictEqual({
+    ).toStrictEqual<TableEntryChanges>({
       added: [],
       modified: [],
       deleted: [

@@ -18,7 +18,7 @@ import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
 
 import {forEach} from 'lodash'
 
-const diffPatcher = jsondiffpatch.create({
+const tableEntryDiffPatcher = jsondiffpatch.create({
   objectHash(object: unknown, index: number) {
     if (isTableEntry(object)) {
       return hashFromTable(object.table)
@@ -28,12 +28,15 @@ const diffPatcher = jsondiffpatch.create({
   }
 })
 
+/**
+ * Compute changes between table entries.
+ */
 export function diffTableEntries(
   oldTables: TableEntry[],
   newTables: TableEntry[],
   options: DiffOptions = {}
 ): TableEntryChanges {
-  const tablesDelta = diffPatcher.diff(oldTables, newTables)
+  const tablesDelta = tableEntryDiffPatcher.diff(oldTables, newTables)
   const changes = emptyChanges<TableEntryChange>()
 
   if (undefined === tablesDelta) {

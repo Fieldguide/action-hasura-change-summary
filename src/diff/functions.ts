@@ -1,5 +1,13 @@
+import {
+  DeletePermissionEntry,
+  InsertPermission,
+  SelectPermission,
+  SelectPermissionEntry
+} from '@hasura/metadata'
+import {isArray, isObject, isString} from 'lodash'
 import * as Mustache from 'mustache'
-
+import prettier from 'prettier'
+import {HasuraMetadataLatest} from '../load/types'
 import {
   ChangeType,
   DeltaAddition,
@@ -8,11 +16,6 @@ import {
   PermissionEntry,
   TableEntry
 } from './types'
-import {DeletePermissionEntry, InsertPermission} from '@hasura/metadata'
-import {isArray, isObject, isString} from 'lodash'
-
-import {HasuraMetadataLatest} from '../load/types'
-import prettier from 'prettier'
 
 export function isTableEntry(object: unknown): object is TableEntry {
   return (
@@ -25,6 +28,12 @@ export function isTableEntry(object: unknown): object is TableEntry {
 
 export function isPermissionEntry(object: unknown): object is PermissionEntry {
   return isObject(object) && isString((object as PermissionEntry).role)
+}
+
+export function isSelectPermissionEntry(
+  object: PermissionEntry
+): object is SelectPermissionEntry {
+  return Boolean((object.permission as SelectPermission).computed_fields)
 }
 
 export function isDeletePermissionEntry(
