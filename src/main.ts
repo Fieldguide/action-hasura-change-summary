@@ -27,8 +27,12 @@ async function run(): Promise<void> {
     const changes = diff(oldMetadata, newMetadata, {
       hasuraEndpoint: core.getInput('hasura_endpoint')
     })
+    const changeHtml = format(changes)
 
-    core.setOutput('change_html', format(changes))
+    core.info('Writing job summary')
+    await core.summary.addRaw(changeHtml).addEOL().write()
+
+    core.setOutput('change_html', changeHtml)
   } catch (error) {
     core.setFailed(error instanceof Error ? error.message : String(error))
 
