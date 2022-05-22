@@ -1,23 +1,25 @@
 import * as core from '@actions/core'
 import * as jsondiffpatch from 'jsondiffpatch'
-import {forEach} from 'lodash'
-import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
+
 import {
   DiffOptions,
   TableEntry,
   TableEntryChange,
   TableEntryChanges
 } from '../types'
-import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
 import {
   changeFromQualifiedTable,
   formatTableEntryChange,
   hashFromTable,
   tableEntryPredicate
 } from './table'
+import {diffTablePermissions, emptyTablePermissionsChanges} from './permissions'
+import {emptyChanges, isAddition, isDeletion, isTableEntry} from '../functions'
 
-const diffPatcher = jsondiffpatch.create({
-  objectHash(object: any, index: number) {
+import {forEach} from 'lodash'
+
+const tableEntryDiffPatcher = jsondiffpatch.create({
+  objectHash(object: unknown, index: number) {
     if (isTableEntry(object)) {
       return hashFromTable(object.table)
     }
@@ -26,19 +28,22 @@ const diffPatcher = jsondiffpatch.create({
   }
 })
 
+/**
+ * Compute changes between table entries.
+ */
 export function diffTableEntries(
   oldTables: TableEntry[],
   newTables: TableEntry[],
   options: DiffOptions = {}
 ): TableEntryChanges {
-  const tablesDelta = diffPatcher.diff(oldTables, newTables)
+  const tablesDelta = tableEntryDiffPatcher.diff(oldTables, newTables)
   const changes = emptyChanges<TableEntryChange>()
 
   if (undefined === tablesDelta) {
     return changes
   }
 
-  forEach(tablesDelta, (delta: any, index: string) => {
+  forEach(tablesDelta, (delta: unknown, index: string) => {
     const tableIndex = Number(index)
 
     if (isAddition<TableEntry>(delta)) {

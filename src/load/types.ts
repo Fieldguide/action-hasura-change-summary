@@ -56,10 +56,11 @@ export type TreeEntryBlob = TreeEntry<{
   text: string
 }>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isTreeEntryBlob(entry: TreeEntry<any>): entry is TreeEntryBlob {
   return (
     isObject(entry) &&
     isObject(entry.object) &&
-    isString((entry.object as any).text)
+    isString((entry.object as {text: string}).text)
   )
 }

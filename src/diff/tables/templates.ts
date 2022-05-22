@@ -15,24 +15,3 @@ export const TABLE_TEMPLATE = `<h3>{{heading}} ({{tables.length}})</h3>
   {{/tables}}
 </ul>
 `
-
-export const PERMISSIONS_TEMPLATE = `<table>
-<thead>
-  <tr>
-    {{#headRow}}
-    <th scope="col">{{.}}</th>
-    {{/headRow}}
-  </tr>
-</thead>
-<tbody>
-  {{#body}}
-    <tr>
-      <th scope="row">{{role}}</th>
-      {{#cells}}
-        <td align="center">{{.}}</td>
-      {{/cells}}
-    </tr>
-  {{/body}}
-</tbody>
-</table>
-`

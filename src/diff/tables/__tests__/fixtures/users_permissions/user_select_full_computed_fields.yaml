@@ -1,0 +1,18 @@
+- table:
+    schema: public
+    name: users
+  computed_fields:
+  - name: full_name
+    definition:
+      function:
+        schema: public
+        name: user_full_name
+    comment: ""
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      computed_fields:
+      - full_name
+      filter: {}

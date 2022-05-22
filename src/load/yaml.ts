@@ -6,16 +6,18 @@ import yaml from 'js-yaml'
 
 const INCLUDE_PREFIX = '!include '
 
-export async function load(path: string, read: FileReader): Promise<any> {
-  return await loadContent(yaml.load(await read(path)), dirname(path), read)
+export async function load<T>(path: string, read: FileReader): Promise<T> {
+  const str = await read(path)
+
+  return loadContent(yaml.load(str), dirname(path), read)
 }
 
-export async function loadContent(
-  content: any,
+export async function loadContent<T>(
+  content: unknown,
   directory: string,
   read: FileReader
-): Promise<any> {
-  const loadArrayValue = async (value: any): Promise<any> => {
+): Promise<T> {
+  const loadArrayValue = async (value: unknown): Promise<unknown> => {
     const includePath = includePathFromValue(value)
 
     if (includePath) {
@@ -34,7 +36,7 @@ export async function loadContent(
       result.push(await loadArrayValue(value))
     }
 
-    return result
+    return result as unknown as T
   }
 
   if (isObject(content)) {
@@ -44,7 +46,7 @@ export async function loadContent(
       if (includePath) {
         const path = join(directory, includePath)
 
-        ;(content as any)[key] = await loadContent(
+        ;(content as Record<string, unknown>)[key] = await loadContent(
           yaml.load(await read(path)),
           dirname(path),
           read
@@ -53,11 +55,11 @@ export async function loadContent(
     }
   }
 
-  return content
+  return content as T
 }
 
-export function includePathFromValue(value: any): string | undefined {
+export function includePathFromValue(value: unknown): string | undefined {
   if (isString(value) && value.startsWith(INCLUDE_PREFIX)) {
-    return value.substr(INCLUDE_PREFIX.length)
+    return value.substring(INCLUDE_PREFIX.length)
   }
 }
