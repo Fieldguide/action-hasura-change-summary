@@ -18,7 +18,7 @@ import {
   tableCellFromColumnChanges,
   viewSummaryFromChanges
 } from './functions'
-import {compact, isArray, isString} from 'lodash'
+import {compact, isArray} from 'lodash'
 import {compareStrings, tableHeadingFromPermission} from '../functions'
 import {
   isDeletePermissionEntry,
@@ -56,7 +56,7 @@ export function columnsFromPermissionEntry(
     return []
   }
 
-  if (isString(entry.permission.columns)) {
+  if (!isArray(entry.permission.columns)) {
     return entry.permission.columns
   }
 
@@ -74,7 +74,7 @@ export function diffColumnPermissions(
   newColumns: TablePermissionColumns,
   tabLevel: number
 ): TablePermissionColumnChanges {
-  if (isString(oldColumns) || isString(newColumns)) {
+  if (!isArray(oldColumns) || !isArray(newColumns)) {
     if (oldColumns === newColumns) {
       return []
     }
