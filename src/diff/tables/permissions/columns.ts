@@ -6,118 +6,154 @@ import {
   PermissionEntry,
   TablePermission,
   TablePermissionColumn,
-  TablePermissionColumnsChanges,
+  TablePermissionColumnChange,
+  TablePermissionColumnChanges,
+  TablePermissionColumns,
   TablePermissions,
   TablePermissionsChanges
 } from '../../types'
 import {
-  ColumnChangeType,
+  ColumnChangeCount,
   ColumnPermissionChange,
   ColumnPermissionChangeCell,
   PermissionColumnChanges
 } from './types'
 import {assertNeverChangeType, iconFromChangeType} from '../utils'
-import {compact, isEqual, isString} from 'lodash'
-import {isDeletePermissionEntry, tab} from '../../functions'
-import {sortStrings, tableHeadingFromPermission} from './functions'
-
-// TODO: add computed columns for select
+import {compact, isArray, isEqual, isString} from 'lodash'
+import {compareStrings, tableHeadingFromPermission} from './functions'
+import {
+  isDeletePermissionEntry,
+  isSelectPermissionEntry,
+  tab
+} from '../../functions'
 
 /**
  * Compute changes between insert, select, or update table column permissions.
  */
 export function diffColumnPermissions(
-  oldColumns: TablePermissionColumn,
-  newColumns: TablePermissionColumn,
+  oldColumns: TablePermissionColumns,
+  newColumns: TablePermissionColumns,
   tabLevel: number
-): TablePermissionColumnsChanges {
+): TablePermissionColumnChanges {
   if (isString(oldColumns) || isString(newColumns)) {
-    if (oldColumns !== newColumns) {
-      core.info(
-        tab(
-          `+/- columns: ${JSON.stringify(oldColumns)} -> ${JSON.stringify(
-            newColumns
-          )}`,
-          tabLevel
-        )
-      )
+    if (oldColumns === newColumns) {
+      return []
     }
 
-    return {
-      added: [],
-      modified: true,
-      deleted: []
-    }
+    core.info(
+      tab(
+        `+/- columns: ${JSON.stringify(oldColumns)} -> ${JSON.stringify(
+          newColumns
+        )}`,
+        tabLevel
+      )
+    )
+
+    return true
   }
 
-  const columnChangeTypeMap = oldColumns.reduce<
-    Map<string, 'added' | 'deleted'>
+  /** column changes, mapped by name */
+  const columnChangeHash = oldColumns.reduce<
+    Map<string, TablePermissionColumnChange>
   >((map, oldColumn) => {
-    return map.set(oldColumn, 'deleted')
+    return map.set(oldColumn.name, {...oldColumn, type: 'deleted'})
   }, new Map())
 
   for (const newColumn of newColumns) {
-    if (!columnChangeTypeMap.delete(newColumn)) {
-      columnChangeTypeMap.set(newColumn, 'added')
+    if (!columnChangeHash.delete(newColumn.name)) {
+      columnChangeHash.set(newColumn.name, {...newColumn, type: 'added'})
     }
   }
 
-  const {added, deleted} = Array.from(columnChangeTypeMap.entries()).reduce<
-    Omit<TablePermissionColumnsChanges, 'modified'>
-  >(
-    (changes, [column, changeType]) => {
-      changes[changeType].push(column)
-
-      return changes
-    },
-    {added: [], deleted: []}
-  )
-
-  if (columnChangeTypeMap.size) {
-    core.info(tab('+/- columns', tabLevel)) // TODO: split out + and -?
+  if (columnChangeHash.size) {
+    core.info(tab(`+/- ${columnChangeHash.size} columns`, tabLevel))
   }
 
-  return {
-    added: sortStrings(added),
-    modified: Boolean(columnChangeTypeMap.size), // TODO revisit
-    deleted: sortStrings(deleted)
-  }
+  return Array.from(columnChangeHash.values()).sort((a, b) => {
+    return compareStrings(a.name, b.name)
+  })
 }
 
+/**
+ * Return normalized columns and computed fields from the specified permission `entry`.
+ */
 export function columnsFromPermissionEntry(
   entry: PermissionEntry
-): TablePermissionColumn {
-  return isDeletePermissionEntry(entry) ? [] : entry.permission.columns
+): TablePermissionColumns {
+  if (
+    isSelectPermissionEntry(entry) &&
+    isArray(entry.permission.columns) &&
+    entry.permission.computed_fields
+  ) {
+    return [
+      ...entry.permission.columns.map<TablePermissionColumn>(name => ({
+        name,
+        isComputed: false
+      })),
+      ...entry.permission.computed_fields.map<TablePermissionColumn>(name => ({
+        name,
+        isComputed: true
+      }))
+    ]
+  }
+
+  if (isDeletePermissionEntry(entry)) {
+    // this type predicate narrowing must exist _after_ isSelectPermissionEntry given that
+    // SelectPermissionEntry and UpdatePermissionEntry effectively extend DeletePermissionEntry,
+    // and TypeScript does not yet have the concept of "exact" types
+    return []
+  }
+
+  if (isString(entry.permission.columns)) {
+    return entry.permission.columns
+  }
+
+  return entry.permission.columns.map<TablePermissionColumn>(name => ({
+    name,
+    isComputed: false
+  }))
 }
 
+/**
+ * Return the mustache `COLUMN_PERMISSIONS_TEMPLATE` view data.
+ */
 export function columnPermissionsViewFromTableChanges(
   tablePermissions: TablePermissionsChanges
 ): null | Record<string, unknown> {
-  let columnChangeCount = 0
-  /** change type, mapped by column name, permission operator, and role */
+  /** changed columns, mapped by permission operator, and role */
   const roleColumnChangesMap = new Map<
     string,
     Partial<PermissionColumnChanges>
   >()
 
-  for (const {permission, role, column, changeType} of columnChangeIterator(
+  const columnChangeCount: ColumnChangeCount = {value: 0, isLowerBound: false}
+  const changeTypes = new Set<ChangeType>()
+
+  for (const {permission, role, columns} of columnChangeIterator(
     tablePermissions
   )) {
     roleColumnChangesMap.set(role, {
       ...roleColumnChangesMap.get(role),
-      [permission]: {
-        ...roleColumnChangesMap.get(role)?.[permission],
-        [column]: changeType
-      }
+      [permission]: columns
     })
-    columnChangeCount++
+
+    if (isArray(columns)) {
+      columnChangeCount.value += columns.length
+
+      for (const {type} of columns) {
+        changeTypes.add(type)
+      }
+    } else if (columns) {
+      columnChangeCount.isLowerBound = true
+      changeTypes.add('modified')
+    }
   }
 
   if (!roleColumnChangesMap.size) {
     return null
   }
 
-  const isPermissionConsistentAcrossRolesMap = TablePermissions.reduce<
+  const permissionIsConsistentAcrossRolesMap = TablePermissions.reduce<
     Map<TablePermission, boolean>
   >((map, permission) => {
     return map.set(
@@ -130,30 +166,33 @@ export function columnPermissionsViewFromTableChanges(
     permission => 'delete_permissions' !== permission
   )
 
+  /** table rows per role */
+  const body = Array.from(roleColumnChangesMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([role, permissionChanges], rowIndex) => ({
+      role,
+      cells: compact(
+        tablePermissionKeys.map(permission => {
+          const isConsistentAcrossRoles =
+            permissionIsConsistentAcrossRolesMap.get(permission) ?? false
+
+          if (isConsistentAcrossRoles && rowIndex > 0) {
+            return null // leverage previous role rowspan
+          }
+
+          return tableCellFromColumnChanges(
+            permissionChanges[permission] ?? [],
+            isConsistentAcrossRoles
+          )
+        })
+      )
+    }))
+
   return {
-    summary: `${columnChangeCount} updated column permissions`,
+    summary: viewSummaryFromChanges(columnChangeCount, changeTypes),
     table: {
       headRow: ['', ...tablePermissionKeys.map(tableHeadingFromPermission)],
-      body: Array.from(roleColumnChangesMap.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([role, permissionChanges], index) => ({
-          role,
-          cells: compact(
-            tablePermissionKeys.map(permission => {
-              const isConsistentAcrossRoles =
-                isPermissionConsistentAcrossRolesMap.get(permission) ?? false
-
-              if (isConsistentAcrossRoles && index > 0) {
-                return null
-              }
-
-              return tableCellFromColumnChanges(
-                permissionChanges[permission],
-                isConsistentAcrossRoles
-              )
-            })
-          )
-        }))
+      body
     }
   }
 }
@@ -164,69 +203,91 @@ export function* columnChangeIterator(
   for (const permission of TablePermissions) {
     for (const changeType of ChangeTypes) {
       for (const {role, columns} of tablePermissions[permission][changeType]) {
-        for (const column of columns.added) {
-          yield {
-            permission,
-            role,
-            column,
-            changeType: 'added'
-          }
-        }
-
-        // TODO modified
-
-        for (const column of columns.deleted) {
-          yield {
-            permission,
-            role,
-            column,
-            changeType: 'deleted'
-          }
+        yield {
+          permission,
+          role,
+          columns
         }
       }
     }
   }
 }
 
-export function tableCellFromColumnChanges(
-  columnChanges: Record<string, ChangeType> | undefined,
-  rowspan: boolean
-): ColumnPermissionChangeCell {
-  if (!columnChanges) {
-    return {content: '', rowspan}
+export function viewSummaryFromChanges(
+  changeCount: ColumnChangeCount,
+  changeTypes: Set<ChangeType>
+): string {
+  const count =
+    String(changeCount.value || 1) + (changeCount.isLowerBound ? '+' : '')
+
+  const verb = viewSummaryVerbFromChangeTypes(changeTypes)
+
+  return `${count} ${verb} column permissions`
+}
+
+export function viewSummaryVerbFromChangeTypes(
+  changeTypes: Set<ChangeType>
+): string {
+  if (1 !== changeTypes.size) {
+    return 'updated'
   }
 
-  const content = sortStrings(Object.keys(columnChanges))
-    .map(column => {
-      return columnContentFromChangeType(column, columnChanges[column])
-    })
-    .join('<br />')
+  const changeType = changeTypes.values().next().value as ChangeType
+
+  switch (changeType) {
+    case 'added':
+      return 'added'
+    case 'modified':
+      return 'updated'
+    case 'deleted':
+      return 'removed'
+    default:
+      return assertNeverChangeType(changeType)
+  }
+}
+
+export function tableCellFromColumnChanges(
+  columnChanges: TablePermissionColumnChanges,
+  rowspan: boolean
+): ColumnPermissionChangeCell {
+  if (true === columnChanges) {
+    return {content: iconFromChangeType('modified'), rowspan}
+  }
+
+  const content = columnChanges.map(contentFromColumnChange).join('<br />')
 
   return {content, rowspan}
 }
 
-export function columnContentFromChangeType(
-  column: string,
-  changeType: ChangeType
-): string {
-  const icon = iconFromChangeType(changeType)
+export function contentFromColumnChange({
+  name,
+  isComputed,
+  type
+}: TablePermissionColumnChange): string {
+  const icon = iconFromChangeType(type)
 
-  switch (changeType) {
+  if (isComputed) {
+    name = `<em>${name}</em>`
+  }
+
+  switch (type) {
     case 'added':
-    case 'modified':
-      return `${icon} ${column}`
+      return `${icon}&nbsp;${name}`
     case 'deleted':
-      return `${icon} <del>${column}</del>`
+      return `${icon}&nbsp;<del>${name}</del>`
     default:
-      assertNeverChangeType(changeType)
+      assertNeverChangeType(type)
   }
 }
 
+/**
+ * Determine if the `permission` column changes are equivalent across roles.
+ */
 export function isPermissionConsistentAcrossRoles(
   roleColumnChangesMap: Map<string, Partial<PermissionColumnChanges>>,
   permission: TablePermission
 ): boolean {
-  let firstColumnChanges: ColumnChangeType | undefined
+  let firstColumnChanges: TablePermissionColumnChanges | undefined
 
   for (const columnChanges of roleColumnChangesMap.values()) {
     if (!firstColumnChanges) {

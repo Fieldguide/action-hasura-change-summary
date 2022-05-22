@@ -1,7 +1,11 @@
 import {PermissionEntry, TablePermission} from '../../types'
 
 export function sortStrings(strings: string[]): string[] {
-  return [...strings].sort((a, b) => a.localeCompare(b))
+  return [...strings].sort(compareStrings)
+}
+
+export function compareStrings(a: string, b: string): number {
+  return a.localeCompare(b)
 }
 
 export function hashFromPermission(permission: PermissionEntry): string {

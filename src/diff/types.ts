@@ -47,17 +47,31 @@ export const TablePermissions = [
 
 export type TablePermission = typeof TablePermissions[number]
 
-export type TablePermissionColumn = string[] | Columns
-
-export interface TablePermissionColumnsChanges {
-  added: string[]
-  modified: boolean
-  deleted: string[]
+/* #region TablePermissionColumns */
+export interface TablePermissionColumn {
+  name: string
+  isComputed: boolean
 }
+
+export type TablePermissionColumnAll = Columns.Empty
+
+export type TablePermissionColumns =
+  | TablePermissionColumn[]
+  | TablePermissionColumnAll
+/* #endregion */
+
+/* #region TablePermissionColumnChanges */
+export interface TablePermissionColumnChange extends TablePermissionColumn {
+  type: 'added' | 'deleted'
+}
+
+/** `true` denotes column permissions changed in some way, but the explicit set of columns is unknown */
+export type TablePermissionColumnChanges = TablePermissionColumnChange[] | true
+/* #endregion */
 
 export interface TablePermissionChange {
   role: string
-  columns: TablePermissionColumnsChanges
+  columns: TablePermissionColumnChanges
 }
 
 export type TablePermissionChanges = Record<ChangeType, TablePermissionChange[]>

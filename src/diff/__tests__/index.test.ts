@@ -43,11 +43,7 @@ describe('format', () => {
                     added: [
                       {
                         role: 'user',
-                        columns: {
-                          added: [],
-                          modified: false,
-                          deleted: []
-                        }
+                        columns: []
                       }
                     ],
                     modified: [],

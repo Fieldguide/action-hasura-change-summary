@@ -60,19 +60,17 @@ test('added and modified', () => {
               added: [
                 {
                   role: 'user',
-                  columns: {
-                    added: ['created_at', 'name'],
-                    modified: true,
-                    deleted: []
-                  }
+                  columns: [
+                    {name: 'created_at', isComputed: false, type: 'added'},
+                    {name: 'name', isComputed: false, type: 'added'}
+                  ]
                 },
                 {
                   role: 'manager',
-                  columns: {
-                    added: ['created_at', 'name'],
-                    modified: true,
-                    deleted: []
-                  }
+                  columns: [
+                    {name: 'created_at', isComputed: false, type: 'added'},
+                    {name: 'name', isComputed: false, type: 'added'}
+                  ]
                 }
               ],
               modified: [],
@@ -83,11 +81,7 @@ test('added and modified', () => {
               modified: [
                 {
                   role: 'user',
-                  columns: {
-                    added: ['name'],
-                    modified: true,
-                    deleted: ['created_at', 'id']
-                  }
+                  columns: []
                 }
               ],
               deleted: []
@@ -141,7 +135,7 @@ test('added and modified', () => {
       </tbody>
     </table>
     <details>
-      <summary>7 updated column permissions</summary>
+      <summary>4 added column permissions</summary>
       <table>
         <thead>
           <tr>
@@ -155,13 +149,13 @@ test('added and modified', () => {
           <tr>
             <th scope="row">manager</th>
             <td></td>
-            <td rowspan="0">➕ created_at<br />➕ name</td>
+            <td rowspan="0">➕&nbsp;created_at<br />➕&nbsp;name</td>
             <td></td>
           </tr>
           <tr>
             <th scope="row">user</th>
             <td></td>
-            <td>➖ <del>created_at</del><br />➖ <del>id</del><br />➕ name</td>
+            <td></td>
           </tr>
         </tbody>
       </table>

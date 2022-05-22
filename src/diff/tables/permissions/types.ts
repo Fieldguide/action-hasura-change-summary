@@ -1,17 +1,22 @@
-import {ChangeType, TablePermission} from '../../types'
+import {TablePermission, TablePermissionColumnChanges} from '../../types'
 
-export type ColumnChangeType = Record<string, ChangeType>
-
-export type PermissionColumnChanges = Record<TablePermission, ColumnChangeType>
+export type PermissionColumnChanges = Record<
+  TablePermission,
+  TablePermissionColumnChanges
+>
 
 export interface ColumnPermissionChange {
   permission: TablePermission
   role: string
-  column: string
-  changeType: ChangeType
+  columns: TablePermissionColumnChanges
 }
 
 export interface ColumnPermissionChangeCell {
   rowspan: boolean
   content: string
+}
+
+export interface ColumnChangeCount {
+  value: number
+  isLowerBound: boolean
 }

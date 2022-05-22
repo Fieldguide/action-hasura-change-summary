@@ -1,7 +1,7 @@
 import {
   DiffOptions,
   TableEntryChanges,
-  TablePermissionColumnsChanges
+  TablePermissionColumnChanges
 } from '../../types'
 import {loadFixture, tableEntryChange} from './utils'
 
@@ -54,11 +54,12 @@ describe('added', () => {
             added: [
               {
                 role: 'user',
-                columns: {
-                  added: ['created_at', 'id', 'last_login_at', 'name'],
-                  modified: true,
-                  deleted: []
-                }
+                columns: [
+                  {name: 'created_at', isComputed: false, type: 'added'},
+                  {name: 'id', isComputed: false, type: 'added'},
+                  {name: 'last_login_at', isComputed: false, type: 'added'},
+                  {name: 'name', isComputed: false, type: 'added'}
+                ]
               }
             ],
             modified: [],
@@ -158,11 +159,16 @@ describe('modified', () => {
                   added: [
                     {
                       role: 'user',
-                      columns: {
-                        added: ['created_at', 'id', 'last_login_at', 'name'],
-                        modified: true,
-                        deleted: []
-                      }
+                      columns: [
+                        {name: 'created_at', isComputed: false, type: 'added'},
+                        {name: 'id', isComputed: false, type: 'added'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'added'
+                        },
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
                     }
                   ],
                   modified: [],
@@ -204,11 +210,9 @@ describe('modified', () => {
                   added: [
                     {
                       role: 'manager',
-                      columns: {
-                        added: ['name'],
-                        modified: true,
-                        deleted: []
-                      }
+                      columns: [
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
                     }
                   ],
                   modified: [],
@@ -218,11 +222,16 @@ describe('modified', () => {
                   added: [
                     {
                       role: 'manager',
-                      columns: {
-                        added: ['created_at', 'id', 'last_login_at', 'name'],
-                        modified: true,
-                        deleted: []
-                      }
+                      columns: [
+                        {name: 'created_at', isComputed: false, type: 'added'},
+                        {name: 'id', isComputed: false, type: 'added'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'added'
+                        },
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
                     }
                   ],
                   modified: [],
@@ -232,11 +241,9 @@ describe('modified', () => {
                   added: [
                     {
                       role: 'manager',
-                      columns: {
-                        added: ['name'],
-                        modified: true,
-                        deleted: []
-                      }
+                      columns: [
+                        {name: 'name', isComputed: false, type: 'added'}
+                      ]
                     }
                   ],
                   modified: [],
@@ -246,11 +253,7 @@ describe('modified', () => {
                   added: [
                     {
                       role: 'manager',
-                      columns: {
-                        added: [],
-                        modified: false,
-                        deleted: []
-                      }
+                      columns: []
                     }
                   ],
                   modified: [],
@@ -296,11 +299,7 @@ describe('modified', () => {
                   modified: [
                     {
                       role: 'user',
-                      columns: {
-                        added: [],
-                        modified: false,
-                        deleted: []
-                      }
+                      columns: []
                     }
                   ],
                   deleted: []
@@ -315,33 +314,29 @@ describe('modified', () => {
   })
 
   describe('update user column select permissions', () => {
-    const tests: [string, string, TablePermissionColumnsChanges][] = [
+    const tests: [string, string, TablePermissionColumnChanges][] = [
       [
         'users_permissions/user_select_full_id_column',
         'users_permissions/user_select_full',
-        {
-          added: ['created_at', 'last_login_at', 'name'],
-          modified: true,
-          deleted: []
-        }
+        [
+          {name: 'created_at', isComputed: false, type: 'added'},
+          {name: 'last_login_at', isComputed: false, type: 'added'},
+          {name: 'name', isComputed: false, type: 'added'}
+        ]
       ],
       [
         'users_permissions/user_select_full',
         'users_permissions/user_select_full_id_column',
-        {
-          added: [],
-          modified: true,
-          deleted: ['created_at', 'last_login_at', 'name']
-        }
+        [
+          {name: 'created_at', isComputed: false, type: 'deleted'},
+          {name: 'last_login_at', isComputed: false, type: 'deleted'},
+          {name: 'name', isComputed: false, type: 'deleted'}
+        ]
       ],
       [
         'users_permissions/user_select_full_all_columns',
         'users_permissions/user_select_full_id_column',
-        {
-          added: [],
-          modified: true,
-          deleted: []
-        }
+        true
       ]
     ]
 
@@ -401,11 +396,20 @@ describe('modified', () => {
                   deleted: [
                     {
                       role: 'user',
-                      columns: {
-                        added: [],
-                        modified: true,
-                        deleted: ['created_at', 'id', 'last_login_at', 'name']
-                      }
+                      columns: [
+                        {
+                          name: 'created_at',
+                          isComputed: false,
+                          type: 'deleted'
+                        },
+                        {name: 'id', isComputed: false, type: 'deleted'},
+                        {
+                          name: 'last_login_at',
+                          isComputed: false,
+                          type: 'deleted'
+                        },
+                        {name: 'name', isComputed: false, type: 'deleted'}
+                      ]
                     }
                   ]
                 }
@@ -437,11 +441,7 @@ test('modified and deleted with table index changes', () => {
             modified: [
               {
                 role: 'user',
-                columns: {
-                  added: [],
-                  modified: false,
-                  deleted: []
-                }
+                columns: []
               }
             ],
             deleted: []
