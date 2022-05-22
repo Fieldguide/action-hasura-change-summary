@@ -44,7 +44,7 @@
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.182",
     "@types/mustache": "^4.1.2",
-    "@types/node": "^16.11.12",
+    "@types/node": "^16.11.36",
     "@typescript-eslint/parser": "^5.23.0",
     "@vercel/ncc": "^0.33.0",
     "eslint": "^8.15.0",
