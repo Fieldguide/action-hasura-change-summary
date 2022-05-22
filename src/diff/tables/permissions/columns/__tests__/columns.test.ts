@@ -1,5 +1,5 @@
-import {columnPermissionsViewFromTableChanges} from '../columns'
-import {emptyTablePermissionsChanges} from '..'
+import {columnPermissionsViewFromTableChanges} from '..'
+import {emptyTablePermissionsChanges} from '../..'
 
 describe('columnPermissionsViewFromTableChanges', () => {
   test('add computed column', () => {

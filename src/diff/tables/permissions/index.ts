@@ -193,24 +193,27 @@ export function viewFromTablePermissionChanges(
     return null
   }
 
+  /** table rows per role */
+  const body = Array.from(rolePermissionChangesMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([role, permissionChanges]) => ({
+      role,
+      cells: TablePermissions.map(permission => {
+        return tableCellFromChangeType(permissionChanges[permission])
+      })
+    }))
+
   return {
     table: {
       headRow: ['', ...TablePermissions.map(tableHeadingFromPermission)],
-      body: Array.from(rolePermissionChangesMap.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([role, permissionChanges]) => ({
-          role,
-          cells: TablePermissions.map(permission => {
-            return tableCellFromChangeType(permissionChanges[permission])
-          })
-        }))
+      body
     },
     columnPermissions: columnPermissionsViewFromTableChanges(tablePermissions)
   }
 }
 
 /**
- * Return `<td>` content illustrating permission `changeType`.
+ * Return HTML table cell content illustrating permission `changeType`.
  */
 export function tableCellFromChangeType(changeType?: ChangeType): string {
   return changeType ? iconFromChangeType(changeType) : ''

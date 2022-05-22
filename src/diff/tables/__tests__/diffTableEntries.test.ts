@@ -337,6 +337,28 @@ describe('modified', () => {
         'users_permissions/user_select_full_all_columns',
         'users_permissions/user_select_full_id_column',
         true
+      ],
+      [
+        'users_permissions/user_select_full_id_column',
+        'users_permissions/user_select_full_computed_fields',
+        [
+          {
+            name: 'full_name',
+            isComputed: true,
+            type: 'added'
+          }
+        ]
+      ],
+      [
+        'users_permissions/user_select_full_computed_fields',
+        'users_permissions/user_select_full_id_column',
+        [
+          {
+            name: 'full_name',
+            isComputed: true,
+            type: 'deleted'
+          }
+        ]
       ]
     ]
 

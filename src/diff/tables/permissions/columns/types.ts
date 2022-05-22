@@ -1,4 +1,4 @@
-import {TablePermission, TablePermissionColumnChanges} from '../../types'
+import {TablePermission, TablePermissionColumnChanges} from '../../../types'
 
 export type PermissionColumnChanges = Record<
   TablePermission,
