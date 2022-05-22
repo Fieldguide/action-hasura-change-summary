@@ -1,4 +1,5 @@
 import {
+  Columns,
   DeletePermissionEntry,
   InsertPermissionEntry,
   QualifiedTable as QualifiedTableBase,
@@ -46,8 +47,31 @@ export const TablePermissions = [
 
 export type TablePermission = typeof TablePermissions[number]
 
+/* #region TablePermissionColumns */
+export interface TablePermissionColumn {
+  name: string
+  isComputed: boolean
+}
+
+export type TablePermissionColumnAll = Columns.Empty
+
+export type TablePermissionColumns =
+  | TablePermissionColumn[]
+  | TablePermissionColumnAll
+/* #endregion */
+
+/* #region TablePermissionColumnChanges */
+export interface TablePermissionColumnChange extends TablePermissionColumn {
+  type: 'added' | 'deleted'
+}
+
+/** `true` denotes column permissions changed in some way, but the explicit set of columns is unknown */
+export type TablePermissionColumnChanges = TablePermissionColumnChange[] | true
+/* #endregion */
+
 export interface TablePermissionChange {
   role: string
+  columns: TablePermissionColumnChanges
 }
 
 export type TablePermissionChanges = Record<ChangeType, TablePermissionChange[]>
