@@ -142,7 +142,7 @@ export function columnPermissionsViewFromTableChanges(
       for (const {type} of columns) {
         columnChangeTypes.add(type)
       }
-    } else if (columns) {
+    } else {
       columnChangeCount.isLowerBound = true
       columnChangeTypes.add('modified')
     }
