@@ -2,6 +2,30 @@ import {columnPermissionsViewFromTableChanges} from '..'
 import {emptyTablePermissionsChanges} from '../..'
 
 describe('columnPermissionsViewFromTableChanges', () => {
+  test('no permission changes', () => {
+    expect(
+      columnPermissionsViewFromTableChanges(emptyTablePermissionsChanges())
+    ).toStrictEqual(null)
+  })
+
+  test('no column changes', () => {
+    expect(
+      columnPermissionsViewFromTableChanges({
+        ...emptyTablePermissionsChanges(),
+        select_permissions: {
+          added: [],
+          modified: [
+            {
+              role: 'user',
+              columns: []
+            }
+          ],
+          deleted: []
+        }
+      })
+    ).toStrictEqual(null)
+  })
+
   test('add computed column', () => {
     expect(
       columnPermissionsViewFromTableChanges({

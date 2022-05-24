@@ -17,16 +17,21 @@ import {assertNeverChangeType, iconFromChangeType} from '../../utils'
 
 import {isEqual} from 'lodash'
 
+/**
+ * Iterate through `tablePermissions` per role and operation that include column changes.
+ */
 export function* columnChangeIterator(
   tablePermissions: TablePermissionsChanges
 ): Generator<ColumnPermissionChange> {
   for (const permission of TablePermissions) {
     for (const changeType of ChangeTypes) {
       for (const {role, columns} of tablePermissions[permission][changeType]) {
-        yield {
-          permission,
-          role,
-          columns
+        if (true === columns || columns.length) {
+          yield {
+            permission,
+            role,
+            columns
+          }
         }
       }
     }
