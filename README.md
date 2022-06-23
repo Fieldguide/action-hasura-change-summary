@@ -6,9 +6,11 @@
 
 <img src="https://user-images.githubusercontent.com/847532/169708857-5aed1ebb-76c4-43de-8309-469c0e8cf2f2.jpg" alt="Hasura Change Summary example comment" width="689">
 
-The action supports changes to database table mappings (in `metadata/databases/`).
-It does not support [other metadata]([url](https://hasura.io/docs/latest/graphql/core/migrations/reference/metadata-format/#databases)),
-such as Actions, Allow Lists, Cron Triggers, Query Collections, Remote Schemas, or Functions.
+## Features
+
+This action currently supports changes to database table metadata including row-level and column-level permissions.
+
+[Other metadata](https://hasura.io/docs/latest/graphql/core/migrations/reference/metadata-format/) such as actions, cron triggers, and remote schemas are not currently supported.
 
 ## Usage
 
