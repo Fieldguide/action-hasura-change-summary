@@ -21,8 +21,7 @@ name: ci
 on:
   pull_request:
     paths:
-      - 'metadata/databases/**.yaml'
-      - 'metadata/version.yaml'
+      - 'metadata/**.yaml'
 jobs:
   hasura-change-summary:
     runs-on: ubuntu-latest
@@ -34,6 +33,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
       - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.hasura-change.outputs.change_html
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: ${{ steps.hasura-change.outputs.change_html }}
