@@ -6,6 +6,12 @@
 
 <img src="https://user-images.githubusercontent.com/847532/169708857-5aed1ebb-76c4-43de-8309-469c0e8cf2f2.jpg" alt="Hasura Change Summary example comment" width="689">
 
+## Features
+
+This action currently supports changes to database table metadata including row-level and column-level permissions.
+
+[Other metadata](https://hasura.io/docs/latest/graphql/core/migrations/reference/metadata-format/) such as actions, cron triggers, and remote schemas are not currently supported.
+
 ## Usage
 
 For example, with marocchino's [Sticky Pull Request Comment](https://github.com/marocchino/sticky-pull-request-comment):
@@ -27,6 +33,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
       - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.hasura-change.outputs.change_html
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: ${{ steps.hasura-change.outputs.change_html }}
