@@ -343,4 +343,91 @@ describe('columnPermissionsViewFromTableChanges', () => {
       }
     })
   })
+
+  test('mix of consistent and inconsistent changes across operation', () => {
+    expect(
+      columnPermissionsViewFromTableChanges({
+        ...emptyTablePermissionsChanges(),
+        select_permissions: {
+          added: [
+            {
+              role: 'manager',
+              columns: [
+                {
+                  name: 'name',
+                  isComputed: false,
+                  type: 'added'
+                }
+              ]
+            },
+            {
+              role: 'user',
+              columns: [
+                {
+                  name: 'name',
+                  isComputed: false,
+                  type: 'added'
+                }
+              ]
+            }
+          ],
+          modified: [],
+          deleted: []
+        },
+        update_permissions: {
+          added: [
+            {
+              role: 'user', // intentionally second role
+              columns: [
+                {
+                  name: 'name',
+                  isComputed: false,
+                  type: 'added'
+                }
+              ]
+            }
+          ],
+          modified: [],
+          deleted: []
+        }
+      })
+    ).toStrictEqual({
+      summary: '3 added column permissions',
+      table: {
+        headRow: ['', 'insert', 'select', 'update'],
+        body: [
+          {
+            role: 'manager',
+            cells: [
+              {
+                content: '',
+                rowspan: false
+              },
+              {
+                content: '➕&nbsp;name',
+                rowspan: true
+              },
+              {
+                content: '',
+                rowspan: false
+              }
+            ]
+          },
+          {
+            role: 'user',
+            cells: [
+              {
+                content: '',
+                rowspan: false
+              },
+              {
+                content: '➕&nbsp;name',
+                rowspan: false
+              }
+            ]
+          }
+        ]
+      }
+    })
+  })
 })
