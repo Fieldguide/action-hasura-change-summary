@@ -7,13 +7,13 @@ import {
   TablePermissions,
   TablePermissionsChanges
 } from '../../../types'
+import {assertNeverChangeType, iconFromChangeType} from '../../utils'
 import {
   ColumnChangeCount,
   ColumnPermissionChange,
   ColumnPermissionChangeCell,
   PermissionColumnChanges
 } from './types'
-import {assertNeverChangeType, iconFromChangeType} from '../../utils'
 
 import {isEqual} from 'lodash'
 
@@ -112,21 +112,28 @@ export function contentFromColumnChange({
 }
 
 /**
- * Determine if the `permission` column changes are equivalent across roles.
+ * Determine if the `permission` column changes are equivalent across all roles.
  */
 export function isPermissionConsistentAcrossRoles(
   roleColumnChangesMap: Map<string, Partial<PermissionColumnChanges>>,
   permission: TablePermission
 ): boolean {
   let firstColumnChanges: TablePermissionColumnChanges | undefined
+  /** number of roles with consistent column changes */
+  let consistentRoles = 1
 
   for (const columnChanges of roleColumnChangesMap.values()) {
     if (!firstColumnChanges) {
       firstColumnChanges = columnChanges[permission]
-    } else if (!isEqual(firstColumnChanges, columnChanges[permission])) {
+    } else if (isEqual(firstColumnChanges, columnChanges[permission])) {
+      consistentRoles++
+    } else {
       return false
     }
   }
 
-  return undefined !== firstColumnChanges
+  return (
+    undefined !== firstColumnChanges &&
+    roleColumnChangesMap.size === consistentRoles
+  )
 }
