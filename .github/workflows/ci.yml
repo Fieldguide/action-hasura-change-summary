@@ -32,5 +32,4 @@ jobs:
           node-version-file: '.nvmrc'
       - uses: ./
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           project_dir: '__tests__/fixtures/${{ matrix.config }}'
