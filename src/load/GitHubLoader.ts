@@ -1,13 +1,17 @@
 import * as core from '@actions/core'
 
-import {TreeEntryBlob, isTreeEntryBlob} from './types'
 import {basename, dirname} from 'path'
+import {
+  isTreeEntryBlob,
+  MetadataContentsGraphqlResponse,
+  TreeEntryBlob
+} from './types'
 
-import {AbstractMetadataLoader} from './AbstractMetadataLoader'
 import {Context} from '@actions/github/lib/context'
 import {GitHub} from '@actions/github/lib/utils'
-import {METADATA_CONTENTS_GRAPHQL_QUERY} from './consts'
 import {isArray} from 'lodash'
+import {AbstractMetadataLoader} from './AbstractMetadataLoader'
+import {METADATA_CONTENTS_GRAPHQL_QUERY} from './consts'
 
 export class GitHubLoader extends AbstractMetadataLoader {
   private directoryContents: Map<string, TreeEntryBlob[]> = new Map()
@@ -40,13 +44,14 @@ export class GitHubLoader extends AbstractMetadataLoader {
       const objectExpression = `${this.baseRef}:${directory}`
 
       core.debug(`Fetching directory contents: ${objectExpression}`)
-      const {repository} = await this.octokit.graphql(
-        METADATA_CONTENTS_GRAPHQL_QUERY,
-        {
-          ...this.repo,
-          objectExpression
-        }
-      )
+      const {repository} =
+        await this.octokit.graphql<MetadataContentsGraphqlResponse>(
+          METADATA_CONTENTS_GRAPHQL_QUERY,
+          {
+            ...this.repo,
+            objectExpression
+          }
+        )
 
       const entries = repository.object?.entries
 

@@ -64,3 +64,11 @@ export function isTreeEntryBlob(entry: TreeEntry<any>): entry is TreeEntryBlob {
     isString((entry.object as {text: string}).text)
   )
 }
+
+export interface MetadataContentsGraphqlResponse {
+  repository: {
+    object?: {
+      entries?: TreeEntryBlob[]
+    }
+  }
+}
