@@ -18,34 +18,39 @@ For example, with marocchino's [Sticky Pull Request Comment](https://github.com/
 
 ```yaml
 name: ci
+
 on:
   pull_request:
     paths:
       - 'metadata/**.yaml'
+
 jobs:
   hasura-change-summary:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: Fieldguide/action-hasura-change-summary@v2
-        id: hasura-change
+      - uses: actions/checkout@v3
+
+      - name: Detect Hasura metadata changes
+        uses: Fieldguide/action-hasura-change-summary@v2
+        id: hasura-change-summary
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: steps.hasura-change.outputs.change_html
+
+      - name: Create or update summary comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.hasura-change-summary.outputs.change_html
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          message: ${{ steps.hasura-change.outputs.change_html }}
+          header: hasura-change-summary
+          message: ${{ steps.hasura-change-summary.outputs.change_html }}
 ```
 
 ## Inputs
 
-| input              | description                                                               |
-| ------------------ | ------------------------------------------------------------------------- |
-| **`github_token`** | `GITHUB_TOKEN` secret                                                     |
-| `project_dir`      | Hasura project directory, relative to `GITHUB_WORKSPACE`; defaults to `.` |
-| `hasura_endpoint`  | Hasura GraphQL engine http(s) endpoint, used for deep console links       |
+| input             | description                                                                                                                                                                |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `github_token`    | Repository `GITHUB_TOKEN` or personal access token secret; defaults to [`github.token`](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) |
+| `project_dir`     | Hasura project directory, relative to `GITHUB_WORKSPACE`; defaults to `.`                                                                                                  |
+| `hasura_endpoint` | Hasura GraphQL engine http(s) endpoint, used for deep console links                                                                                                        |
 
 ## Outputs
 
