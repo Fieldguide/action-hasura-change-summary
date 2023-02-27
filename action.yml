@@ -17,7 +17,7 @@ outputs:
   change_html:
     description: 'HTML change summary'
 runs:
-  using: 'node16'
+  using: 'node18'
   main: 'dist/index.js'
 branding:
   icon: message-circle
