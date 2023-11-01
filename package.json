@@ -43,7 +43,7 @@
     "@types/jest": "^28.1.6",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.189",
-    "@types/mustache": "^4.2.1",
+    "@types/mustache": "^4.2.4",
     "@types/node": "^16.18.3",
     "@typescript-eslint/parser": "^5.43.0",
     "@vercel/ncc": "^0.34.0",
