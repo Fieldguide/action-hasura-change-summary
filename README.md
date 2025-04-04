@@ -28,10 +28,11 @@ jobs:
   hasura-change-summary:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Detect Hasura metadata changes
-        uses: Fieldguide/action-hasura-change-summary@v2
+        uses: Fieldguide/action-hasura-change-summary@v3
         id: hasura-change-summary
         with:
           hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
