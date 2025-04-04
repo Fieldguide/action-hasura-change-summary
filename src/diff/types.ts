@@ -21,7 +21,7 @@ export interface TableEntry extends TableEntryBase {
 /* #region changes */
 export const ChangeTypes = ['added', 'modified', 'deleted'] as const
 
-export type ChangeType = (typeof ChangeTypes)[number]
+export type ChangeType = typeof ChangeTypes[number]
 
 export interface ConsoleLink {
   console: {
@@ -45,7 +45,7 @@ export const TablePermissions = [
   'delete_permissions'
 ] as const
 
-export type TablePermission = (typeof TablePermissions)[number]
+export type TablePermission = typeof TablePermissions[number]
 
 /* #region TablePermissionColumns */
 export interface TablePermissionColumn {
