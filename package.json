@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "Generate readable Hasura metadata change summaries",
+  "engines": {
+    "node": ">=20.x <21"
+  },
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
