@@ -36,6 +36,9 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
     devDependencies:
+      '@octokit/types':
+        specifier: ^14.1.0
+        version: 14.1.0
       '@types/jest':
         specifier: ^28.1.6
         version: 28.1.6
@@ -424,6 +427,9 @@ packages:
   '@octokit/openapi-types@24.2.0':
     resolution: {integrity: sha512-9sIH3nSUttelJSXUrmGzl7QUBFul0/mB8HRYl3fOlgHbIWG+WnYDXU3v/2zMtAvuzZ/ed00Ei6on975FhBfzrg==}
 
+  '@octokit/openapi-types@25.1.0':
+    resolution: {integrity: sha512-idsIggNXUKkk0+BExUn1dQ92sfysJrje03Q0bv0e+KPLrvyqZF8MnBpFz8UNfYDwB3Ie7Z0TByjWfzxt7vseaA==}
+
   '@octokit/plugin-paginate-rest@9.2.2':
     resolution: {integrity: sha512-u3KYkGF7GcZnSD/3UP0S7K5XUFT2FkOQdcfXZGZQPGv3lm4F2Xbf71lvjldr8c1H3nNbF+33cLEkWYbokGWqiQ==}
     engines: {node: '>= 18'}
@@ -449,6 +455,9 @@ packages:
 
   '@octokit/types@13.10.0':
     resolution: {integrity: sha512-ifLaO34EbbPj0Xgro4G5lP5asESjwHracYJvVaPIyXMuiuXLlhic3S47cBdTb+jfODkTE5YtGCLt3Ay3+J97sA==}
+
+  '@octokit/types@14.1.0':
+    resolution: {integrity: sha512-1y6DgTy8Jomcpu33N+p5w58l6xyt55Ar2I91RPiIA0xCJBXyUAhXCcmZaDWSANiha7R9a6qJJ2CRomGPZ6f46g==}
 
   '@sidvind/better-ajv-errors@2.0.0':
     resolution: {integrity: sha512-S+3eyeMbWQifgbDF15eojGVJi8n5uU0bGJYQsvsHPyU4lmrMsXvfiCh7MM0IPEF4a4jRBsljMExtKlo7kM0jqQ==}
@@ -2626,6 +2635,8 @@ snapshots:
 
   '@octokit/openapi-types@24.2.0': {}
 
+  '@octokit/openapi-types@25.1.0': {}
+
   '@octokit/plugin-paginate-rest@9.2.2(@octokit/core@5.2.1)':
     dependencies:
       '@octokit/core': 5.2.1
@@ -2656,6 +2667,10 @@ snapshots:
   '@octokit/types@13.10.0':
     dependencies:
       '@octokit/openapi-types': 24.2.0
+
+  '@octokit/types@14.1.0':
+    dependencies:
+      '@octokit/openapi-types': 25.1.0
 
   '@sidvind/better-ajv-errors@2.0.0(ajv@8.8.2)':
     dependencies:

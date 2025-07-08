@@ -44,6 +44,7 @@
     "urlcat": "^2.0.4"
   },
   "devDependencies": {
+    "@octokit/types": "^14.1.0",
     "@types/jest": "^28.1.6",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.189",
