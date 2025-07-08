@@ -51,6 +51,9 @@ importers:
       '@types/node':
         specifier: ^20.17.30
         version: 20.17.30
+      '@types/prettier':
+        specifier: ^2.6.1
+        version: 2.6.1
       '@typescript-eslint/parser':
         specifier: ^5.43.0
         version: 5.43.0(eslint@8.28.0)(typescript@4.9.3)
@@ -1561,6 +1564,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsx-ast-utils@3.3.2:
     resolution: {integrity: sha512-4ZCADZHRkno244xlNnn4AOG6sRQ7iBZ5BbgZ4vW4y5IZw7cVUD1PPeblm1xx/nfmMxPdt/LHsXZW8z/j58+l9Q==}
