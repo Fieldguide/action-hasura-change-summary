@@ -2,14 +2,14 @@ import {dirname, join} from 'path'
 import {isArray, isObject, isString} from 'lodash'
 
 import {FileReader} from './types'
-import yaml from 'js-yaml'
+import {load as yamlLoad} from 'js-yaml'
 
 const INCLUDE_PREFIX = '!include '
 
 export async function load<T>(path: string, read: FileReader): Promise<T> {
   const str = await read(path)
 
-  return loadContent(yaml.load(str), dirname(path), read)
+  return loadContent(yamlLoad(str), dirname(path), read)
 }
 
 export async function loadContent<T>(
@@ -23,7 +23,7 @@ export async function loadContent<T>(
     if (includePath) {
       const path = join(directory, includePath)
 
-      return loadContent(yaml.load(await read(path)), dirname(path), read)
+      return loadContent(yamlLoad(await read(path)), dirname(path), read)
     }
 
     return loadContent(value, directory, read)
@@ -47,7 +47,7 @@ export async function loadContent<T>(
         const path = join(directory, includePath)
 
         ;(content as Record<string, unknown>)[key] = await loadContent(
-          yaml.load(await read(path)),
+          yamlLoad(await read(path)),
           dirname(path),
           read
         )

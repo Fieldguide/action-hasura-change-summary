@@ -12,6 +12,20 @@ This action currently supports changes to database table metadata including row-
 
 [Other metadata](https://hasura.io/docs/latest/graphql/core/migrations/reference/metadata-format/) such as actions, cron triggers, and remote schemas are not currently supported.
 
+## Installation
+
+Enable [Corepack](https://github.com/nodejs/corepack)
+
+```bash
+corepack enable
+```
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
 ## Usage
 
 For example, with marocchino's [Sticky Pull Request Comment](https://github.com/marocchino/sticky-pull-request-comment):
