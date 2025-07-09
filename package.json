@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=20.x <21"
   },
+  "packageManager": "pnpm@10.12.4",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,7 +16,7 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest --watch",
     "test:ci": "jest",
-    "all": "npm run build && npm run format:check && npm run lint && npm run package && npm run test:ci"
+    "all": "pnpm build && pnpm format:check && pnpm lint && pnpm package && pnpm test:ci"
   },
   "repository": {
     "type": "git",
@@ -43,11 +44,13 @@
     "urlcat": "^2.0.4"
   },
   "devDependencies": {
+    "@octokit/types": "^14.1.0",
     "@types/jest": "^28.1.6",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.189",
     "@types/mustache": "^4.2.1",
     "@types/node": "^20.17.30",
+    "@types/prettier": "^2.6.1",
     "@typescript-eslint/parser": "^5.43.0",
     "@vercel/ncc": "^0.34.0",
     "eslint": "^8.28.0",
