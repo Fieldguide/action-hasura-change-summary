@@ -4,7 +4,7 @@
   "private": true,
   "description": "Generate readable Hasura metadata change summaries",
   "engines": {
-    "node": ">=20.x <21"
+    "node": ">=24.x <25"
   },
   "packageManager": "pnpm@10.12.4",
   "main": "lib/main.js",
@@ -33,8 +33,8 @@
   "author": "Nick Amoscato <nick@amoscato.com>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.10.0",
-    "@actions/github": "^6.0.0",
+    "@actions/core": "^2.0.3",
+    "@actions/github": "^8.0.1",
     "@hasura/metadata": "^1.0.2",
     "js-yaml": "^4.1.0",
     "jsondiffpatch": "^0.4.1",
@@ -49,9 +49,9 @@
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.189",
     "@types/mustache": "^4.2.1",
-    "@types/node": "^20.17.30",
+    "@types/node": "^24.12.2",
     "@types/prettier": "^2.6.1",
-    "@typescript-eslint/parser": "^5.43.0",
+    "@typescript-eslint/parser": "^8.58.2",
     "@vercel/ncc": "^0.34.0",
     "eslint": "^8.28.0",
     "eslint-plugin-github": "^4.3.7",
@@ -59,6 +59,6 @@
     "html-validate": "^7.10.0",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.7",
-    "typescript": "^4.9.3"
+    "typescript": "^5.9.3"
   }
 }
