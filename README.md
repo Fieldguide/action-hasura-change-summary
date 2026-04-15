@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Detect Hasura metadata changes
-        uses: Fieldguide/action-hasura-change-summary@v3
+        uses: Fieldguide/action-hasura-change-summary@v4
         id: hasura-change-summary
         with:
           hasura_endpoint: https://my-pr-${{ github.event.number }}-app.example.com
