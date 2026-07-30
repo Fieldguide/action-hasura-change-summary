@@ -1,0 +1,5 @@
+overrides:
+  "brace-expansion@>=1 <2": 1.1.18
+  "brace-expansion@>=2 <3": 2.1.4
+  "brace-expansion@>=3 <4": "3.0.6"
+  "brace-expansion@>=4": 5.0.9
