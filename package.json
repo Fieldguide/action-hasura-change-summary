@@ -47,7 +47,7 @@
     "@octokit/types": "^14.1.0",
     "@types/jest": "^28.1.6",
     "@types/js-yaml": "^4.0.5",
-    "@types/lodash": "^4.14.189",
+    "@types/lodash": "^4.17.20",
     "@types/mustache": "^4.2.1",
     "@types/node": "^24.12.2",
     "@types/prettier": "^2.6.1",
